@@ -1,0 +1,24 @@
+{
+  "name": "coursework_stage_two",
+  "version": "1.0.0",
+  "description": "",
+  "main": "servermain.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeRuss404/LabSSD.git"
+  },
+  "author": "DanielRussell",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DeRuss404/LabSSD/issues"
+  },
+  "homepage": "https://github.com/DeRuss404/LabSSD#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^5.2.0",
+    "tailwindcss": "^2.0.1"
+  }
+}
