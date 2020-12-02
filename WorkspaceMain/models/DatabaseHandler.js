@@ -5,6 +5,10 @@
 const client = require('mongodb').MongoClient;
 const url = "mongodb://localhost:27017/StageTwo";
 
+let User = require('../models/User');
+let Ticket = require('../models/Ticket');
+let Comment = require('../models/Comment');
+
 //DBHandler class definition
 class DBHandler{
 
@@ -28,6 +32,27 @@ class DBHandler{
 } */
 
 //DB inserts//
+
+//Roles
+insertRoles(){
+    client.connect(url, function(err, db){
+        if(err) throw err;
+        var dbo = db.db("StageTwo");
+
+        roles = [
+            {_id: 1, RoleName: 'Developer'},
+            {_id: 2, RoleName: 'Tester'},
+            {_id: 3, RoleName: 'Client'}
+        ];
+
+        dbo.collection("roles").insertMany(roles,function(err,res){
+            if(err) throw err;
+            console.log("Role documents added" + res.insertedCount);
+        });
+
+        db.close();
+    });
+}
 
 //Users
 insertUser(user){
@@ -213,6 +238,64 @@ dropComments(){
 
         db.close();
     });
+}
+
+//Comments
+dropRoles(){
+    client.connect(url, function(err, db){
+        if(err) throw err;
+        var dbo = db.db("StageTwo");
+
+        dbo.collection("roles").drop(function(err,res){
+            if(err) throw err;
+            console.log("Roles collection dropped");
+        });
+
+        db.close();
+    });
+}
+
+//database seeder method
+seedDatabase(){
+    
+    //drop pre-existing data
+    try{
+        this.dropRoles();
+        this.dropUsers();
+        this.dropTickets();
+        this.dropComments();
+    }
+    catch (error){
+        console.log("Unable to drop database");
+        console.log(error);
+    }
+
+    //users
+    try {
+        this.insertUser(new User('test', 'test', 1));  
+    } 
+    catch (error){
+        console.log("Unable to seed users");
+        console.log(error);
+    }
+
+    //tickets
+    try {
+        this.insertTicket();
+    } 
+    catch (error){
+        console.log("Unable to seed tickets");
+        console.log(error);
+    }
+
+    //comments
+    try {
+        this.insertComment();
+    } 
+    catch (error){
+        console.log("Unable to seed comments");
+        console.log(error);
+    }
 }
 
 }
