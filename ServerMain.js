@@ -9,6 +9,9 @@ let path = require('path');
 
 //Controllers
 let maincontroller = require('./WorkspaceMain/controllers/MainController');
+let usercontroller = require('./WorkspaceMain/controllers/UserController');
+let ticketcontroller = require('./WorkspaceMain/controllers/TicketController');
+let commentcontroller = require('./WorkspaceMain/controllers/CommentController');
 
 //Express set-up
 var app = express();
@@ -24,6 +27,9 @@ const staticpath = path.join(__dirname, './WorkspaceMain/views');
 app.use(express.static(staticpath));
 
 //router settings
+app.use('/', usercontroller);
+app.use('/', ticketcontroller);
+app.use('/', commentcontroller);
 app.use('/', maincontroller);
 
 //Error

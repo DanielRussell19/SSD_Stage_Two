@@ -1,5 +1,5 @@
 //Daniel Russell
-//MongoDB Server may be required with Driver.
+//MongoDB Server will be required with Driver.
 
 //constants
 const client = require('mongodb').MongoClient;
@@ -13,23 +13,14 @@ let Comment = require('../models/Comment');
 class DBHandler{
 
 //DB Creation and Drop//
-/* createDB(){
+createDB(){
     client.connect(url, function (err, db) 
     {
         if(err) throw err;
         console.log("Database created!");
         db.close();
     });
-} */
-
-/* dropDB(){
-    client.connect(url, function (err, db) 
-    {
-        if(err) throw err;
-        console.log("Database dropped!");
-        db.close();
-    });
-} */
+}
 
 //DB inserts//
 
@@ -281,7 +272,7 @@ seedDatabase(){
 
     //tickets
     try {
-        this.insertTicket();
+        this.insertTicket(new Ticket());
     } 
     catch (error){
         console.log("Unable to seed tickets");
@@ -290,7 +281,7 @@ seedDatabase(){
 
     //comments
     try {
-        this.insertComment();
+        this.insertComment(new Comment());
     } 
     catch (error){
         console.log("Unable to seed comments");

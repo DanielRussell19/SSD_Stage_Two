@@ -6,11 +6,11 @@ let dbh = new db();
 
 //Inital responses
 router.get("/TicketListing", function(req,res){
-    res.render('./main/ticketindex', {title: 'Safari Security Ticket Index', layout: 'main'} );
+    res.render('./ticket/ticketindex', {title: 'Safari Security Ticket Index', layout: 'main'} );
 });
 
 router.get("/ViewTicket", function(req,res){
-    res.render('./main/ticket', {title: 'Safari Security About Us', layout: 'main'} );
+    res.render('./ticket/ticket', {title: 'Safari Security Ticket', layout: 'main'} );
 });
 
 module.exports = router;
