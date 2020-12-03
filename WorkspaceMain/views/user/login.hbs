@@ -6,17 +6,32 @@
     <title>Document</title>
 </head> --}}
 <body>
-    <div>
-        <header>Safari Sectyffytfytytx</header>
-        <nav><a href="/Login">Login</a> | <a href="/AboutUs">About Us</a></nav>
+    <div class="header-container">
+        <h1 class="header-title">Safari Security Ticket Login</h1>
+        <nav class="header-nav"><a href="/" class="header-nav-btn">Home</a> | <a href="/AboutUs" class="header-nav-btn">About Us</a></nav>
     </div>
 
-    <div>
-        <middle>Middle</middle>
+    <div class="middle-container">
+        <form method="POST">
+            <table>
+                <tr>
+                    <td><label for="username">Username:</label><input name="username" type="text"></td>
+                </tr>
+                <tr>
+                    <td><label for="password">Password:</label><input name="password" type="text"></td>
+                </tr>
+                <tr>
+                    <td><input type="submit"></td>
+                </tr>
+            </table>
+        </form>
     </div>
 
-    <div>
-        <footer>Footer</footer>
+    <div class="footer-container">
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+            Nulla tincidunt volutpat gravida. Proin ac sollicitudin ipsum, vitae interdum risus. 
+        </p>
     </div>
 </body>
 {{!-- </html> --}}
