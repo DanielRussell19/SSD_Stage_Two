@@ -21,6 +21,7 @@ router.post("/Login", function(req,res){
          res.redirect('/error');
      }
 
+    console.log(dbh.lookupUser(new User(req.body.username, req.body.password)));
     res.redirect('/TicketListing');
 });
 

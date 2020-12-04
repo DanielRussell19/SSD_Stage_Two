@@ -257,6 +257,7 @@ async lookupUser(user){
             if(err) throw err;
 
             console.log(res);
+            result = res;
         });
         
         db.close();
