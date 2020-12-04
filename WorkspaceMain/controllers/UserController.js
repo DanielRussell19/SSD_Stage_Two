@@ -4,12 +4,23 @@ let router = express.Router();
 let db = require('../models/DatabaseHandler');
 let dbh = new db();
 
+let User = require('../models/User');
+
 //Inital responses
 router.get("/Login", function(req,res){
     res.render('./user/login', {title: 'Safari Security Login', layout: 'main'} );
 });
 
 router.post("/Login", function(req,res){
+     if(!req.body.username || !req.body.password){
+         console.log("Invalid");
+         res.redirect('/error');
+     }
+     else if(dbh.lookupUser(new User(req.body.username, req.body.password)) == null){
+         console.log("Not Found");
+         res.redirect('/error');
+     }
+
     res.redirect('/TicketListing');
 });
 
@@ -18,7 +29,7 @@ router.get("/Loginout", function(req,res){
 });
 
 router.post("/Loginout", function(req,res){
-    res.render('./user/logout', {title: 'Safari Security Logout', layout: 'main'} );
+    res.redirect('/');
 });
 
 router.get("/UpdateUser", function(req,res){

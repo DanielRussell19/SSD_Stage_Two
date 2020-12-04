@@ -1,6 +1,9 @@
 let express = require('express');
 let router = express.Router();
 
+let db = require('../models/DatabaseHandler');
+let dbh = new db();
+
 //Inital responses
 router.get("/", function(req,res){
     res.render('./main/index', {title: 'Safari Security Ticket Index', layout: 'main'} );
@@ -8,6 +11,11 @@ router.get("/", function(req,res){
 
 router.get("/AboutUs", function(req,res){
     res.render('./main/aboutus', {title: 'Safari Security About Us', layout: 'main'} );
+});
+
+router.get("/SeedDB", function(req,res){
+    dbh.seedDatabase();
+    res.render('./main/index', {title: 'Tempoary Seeder Page', layout: 'main'} );
 });
 
 router.use(function(req,res){

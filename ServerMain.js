@@ -26,6 +26,12 @@ app.set('port', process.env.PORT || 2000);
 const staticpath = path.join(__dirname, './WorkspaceMain/views');
 app.use(express.static(staticpath));
 
+//URL-encoding? to use body-paser for requests?
+app.use(express.urlencoded());
+
+//parse JSON bodies as sent by API
+app.use(express.json());
+
 //router settings
 app.use('/', usercontroller);
 app.use('/', ticketcontroller);

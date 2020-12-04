@@ -30,7 +30,7 @@ insertRoles(){
         if(err) throw err;
         var dbo = db.db("StageTwo");
 
-        roles = [
+        var roles = [
             {_id: 1, RoleName: 'Developer'},
             {_id: 2, RoleName: 'Tester'},
             {_id: 3, RoleName: 'Client'}
@@ -246,15 +246,59 @@ dropRoles(){
     });
 }
 
+//lookups
+async lookupUser(user){
+    client.connect(url, function(err, db){
+        if(err) throw err;
+        var dbo = db.db("StageTwo");
+        var result = null;
+
+        dbo.collection("users").findOne(user,function(err,res){
+            if(err) throw err;
+
+            console.log(res);
+        });
+        
+        db.close();
+        return result;
+    });
+}
+
+lookupTicket(ticketid){
+    client.connect(url, function(err, db){
+        if(err) throw err;
+        var dbo = db.db("StageTwo");
+
+        dbo.collection("tickets").findOne(ticketid,function(err,res){
+            if(err) throw err;
+            return res;
+        });
+
+        db.close();
+    });
+}
+
+lookupComment(ticketid){
+    client.connect(url, function(err, db){
+        if(err) throw err;
+        var dbo = db.db("StageTwo");
+
+        dbo.collection("comments").findOne(ticketid,function(err,res){
+            if(err) throw err;
+            return res;
+        });
+
+        db.close();
+    });
+}
+
 //database seeder method
 seedDatabase(){
     
     //drop pre-existing data
     try{
-        this.dropRoles();
-        this.dropUsers();
-        this.dropTickets();
-        this.dropComments();
+        this.createDB();
+        this.insertRoles();
     }
     catch (error){
         console.log("Unable to drop database");
@@ -263,7 +307,7 @@ seedDatabase(){
 
     //users
     try {
-        this.insertUser(new User('test', 'test', 1));  
+        this.insertUser(new User('test', 'test'));  
     } 
     catch (error){
         console.log("Unable to seed users");
@@ -272,7 +316,7 @@ seedDatabase(){
 
     //tickets
     try {
-        this.insertTicket(new Ticket());
+        //this.insertTicket(new Ticket());
     } 
     catch (error){
         console.log("Unable to seed tickets");
@@ -281,7 +325,7 @@ seedDatabase(){
 
     //comments
     try {
-        this.insertComment(new Comment());
+        //this.insertComment(new Comment());
     } 
     catch (error){
         console.log("Unable to seed comments");

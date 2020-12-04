@@ -1,8 +1,8 @@
 class User{
-    constructor(Username,Password,RoleID){
-        this.Username = Username;
-        this.Password = Password;
-        this.RoleID = RoleID;
+    constructor(username,password){
+        this.username = username;
+        this.password = password;
+        //this.RoleIDs = [];
     }
 }
 
