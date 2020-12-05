@@ -76,16 +76,22 @@ async function insertComment(comment){
 
 //Users
 async function updateUser(id, user){
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
-
-        dbo.collection("users").updateOne(id,user,function(err,res){
+    return new Promise(resolve => {
+        
+        client.connect(url, function(err, db){
             if(err) throw err;
-            console.log("User updated");
-        });
+            var dbo = db.db("StageTwo");
+    
+            var newvalues = { $set: {username: user.username, password: user.password, RoleIDs: user.RoleIDs, isloggedin: user.isloggedin} };
 
-        db.close();
+            dbo.collection("users").updateOne(id,newvalues,function(err,res){
+                if(err) throw err;
+                console.log("User updated");
+                resolve(true);
+            });
+    
+            db.close();
+        });
     });
 }
 
@@ -123,16 +129,21 @@ async function updateComment(id, comment){
 
 //Users
 async function deleteUser(id){
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
 
-        dbo.collection("users").deleteOne(id,function(err,res){
+    return new Promise(resolve => {
+        
+        client.connect(url, function(err, db){
             if(err) throw err;
-            console.log("User document deleted");
+            var dbo = db.db("StageTwo");
+    
+            dbo.collection("users").deleteOne(id,function(err,res){
+                if(err) throw err;
+                console.log("User document deleted");
+                resolve(true);
+            });
+    
+            db.close();
         });
-
-        db.close();
     });
 }
 
@@ -168,7 +179,6 @@ async function deleteComment(id){
 
 //gets
 function getUser(user){
-    
     return new Promise(resolve => {
         
         client.connect(url, function(err, db){
@@ -177,7 +187,6 @@ function getUser(user){
     
             dbo.collection("users").findOne(user, function(err,res){
                 if(err) throw err;
-                console.log(res);
                 resolve(res);
             });
     
@@ -200,6 +209,23 @@ async function getTicket(ticketid){
     });
 }
 
+async function getTickets(){
+    return new Promise(resolve => {
+        
+        client.connect(url, function(err, db){
+            if(err) throw err;
+            var dbo = db.db("StageTwo");
+    
+            dbo.collection("tickets").find({}).toArray(function(err,res){
+                if(err) throw err;
+                resolve(res);
+            });
+    
+            db.close();
+        });
+    });
+}
+
 async function getComment(ticketid){
     client.connect(url, function(err, db){
         if(err) throw err;
@@ -214,12 +240,38 @@ async function getComment(ticketid){
     });
 }
 
+async function getComments(ticketid){
+    client.connect(url, function(err, db){
+        if(err) throw err;
+        var dbo = db.db("StageTwo");
+
+        dbo.collection("comments").findOne(ticketid,function(err,res){
+            if(err) throw err;
+            return res;
+        });
+
+        db.close();
+    });
+}
+
+function loginUser(user){
+    user.isloggedin = true;
+    updateUser(user._id, user);
+    console.log('User logged');
+}
+
+function logoutUser(user){
+    user.isloggedin = false;
+    updateUser(user._id, user);
+    console.log('User log out');
+}
+
 //database seeder method
 async function seedDatabase(){
     
     //drop pre-existing data
-    this.createDB();
-    this.insertRoles();
+    createDB();
+    insertRoles();
 
     //users
     client.connect(url, function(err, db){
@@ -227,14 +279,14 @@ async function seedDatabase(){
         var dbo = db.db("StageTwo");
 
         var q = [
-            {username: 'test', password: 'test', RoleIDs:[2] },
-            {username: 'Dave', password: 'test', RoleIDs:[1, 2]},
-            {username: 'Lilith', password: 'test', RoleIDs:[1]},
-            {username: 'Paul', password: 'test', RoleIDs:[2]},
-            {username: 'HP', password: 'test', RoleIDs:[3]},
-            {username: 'Amazon', password: 'test', RoleIDs:[3]},
-            {username: 'Qula', password: 'test', RoleIDs:[3]},
-            {username: 'Onion', password: 'test', RoleIDs:[3]}
+            {username: 'test', password: 'test', RoleIDs:[2], isloggedin: false },
+            {username: 'Dave', password: 'test', RoleIDs:[1, 2], isloggedin: false},
+            {username: 'Lilith', password: 'test', RoleIDs:[1], isloggedin: false},
+            {username: 'Paul', password: 'test', RoleIDs:[2], isloggedin: false},
+            {username: 'HP', password: 'test', RoleIDs:[3], isloggedin: false},
+            {username: 'Amazon', password: 'test', RoleIDs:[3], isloggedin: false},
+            {username: 'Qula', password: 'test', RoleIDs:[3], isloggedin: false},
+            {username: 'Onion', password: 'test', RoleIDs:[3], isloggedin: false}
         ];
     
         dbo.collection("users").insertMany(q,function(err,res){
@@ -245,33 +297,35 @@ async function seedDatabase(){
         db.close();
     });  
 
-    // //tickets
-    // q = {
+    //tickets
+    q = [
+        {Title: "Broken HTTP",UserID: '5fca95aab218b22208ccdca6', TicketNumber: 1, DOS: Date.now(), Priority:'low', Status: 'open', Description: 'test', Type: 'development'},
+        {Title: "What's the Wifi password?",UserID: '5fca95aab218b22208ccdca6', TicketNumber: 2, DOS: Date.now(), Priority:'medium', Status: 'closed', Description: 'test', Type: 'development'},
+        {Title: "ERROR 404, like what?!!!",UserID: '5fca95aab218b22208ccdca6', TicketNumber: 2, DOS: Date.now(), Priority:'high', Status: 'resolved', Description: 'test', Type: 'development'}
+    ];
 
-    // };
+    client.connect(url, function(err, db){
+         if(err) throw err;
+         var dbo = db.db("StageTwo");
+    
+         dbo.collection("tickets").insertMany(q,function(err,res){
+         if(err) throw err;
+             console.log("ticket documents added" + res.insertedCount);
+        });
+    
+         db.close();
+     });
+
+    //comments
+    // q = [
+    //     {UserID:'5fca95aab218b22208ccdca6', TicketID:'', DOS: Date.now(), Content: 'test'}
+    // ];
 
     // client.connect(url, function(err, db){
     //     if(err) throw err;
     //     var dbo = db.db("StageTwo");
     
-    //     dbo.collection("tickets").insertMany(q,function(err,res){
-    //     if(err) throw err;
-    //         console.log("ticket documents added" + res.insertedCount);
-    //     });
-    
-    //     db.close();
-    // });
-
-    // //comments
-    // q = {
-
-    // };
-
-    // client.connect(url, function(err, db){
-    //     if(err) throw err;
-    //     var dbo = db.db("StageTwo");
-    
-    //     dbo.collection("comments").insertMany(q,function(err,res){
+    //     dbo.collection("comments").insertMany(new Comment(),function(err,res){
     //     if(err) throw err;
     //         console.log("comment documents added" + res.insertedCount);
     //     });
@@ -283,3 +337,8 @@ async function seedDatabase(){
 //Exports class DBHandler
 exports.seedDatabase = seedDatabase;
 exports.getUser = getUser;
+exports.loginUser = loginUser;
+exports.logoutUser = logoutUser;
+exports.updateUser = updateUser;
+exports.deleteUser = deleteUser;
+exports.getTickets = getTickets;
