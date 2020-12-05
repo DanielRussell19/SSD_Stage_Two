@@ -2,8 +2,6 @@ let express = require('express');
 let router = express.Router();
 
 let db = require('../models/DatabaseHandler');
-let dbh = new db();
-
 let User = require('../models/User');
 
 //Inital responses
@@ -11,18 +9,21 @@ router.get("/Login", function(req,res){
     res.render('./user/login', {title: 'Safari Security Login', layout: 'main'} );
 });
 
-router.post("/Login", function(req,res){
-     if(!req.body.username || !req.body.password){
-         console.log("Invalid");
-         res.redirect('/error');
-     }
-     else if(dbh.lookupUser(new User(req.body.username, req.body.password)) == null){
-         console.log("Not Found");
-         res.redirect('/error');
-     }
+router.post("/Login", async function(req,res){
+    if(!req.body.username || !req.body.password){
+        res.redirect("/Login");
+    }
+    else{
+        var user = await db.getUser(new User(req.body.username, req.body.password));
+        console.log(user);
 
-    console.log(dbh.lookupUser(new User(req.body.username, req.body.password)));
-    res.redirect('/TicketListing');
+        if(user == null || !user){
+            res.redirect("/Error");
+        }
+
+        req.session.user = user;
+        res.redirect("/TicketListing");
+    }
 });
 
 router.get("/Loginout", function(req,res){

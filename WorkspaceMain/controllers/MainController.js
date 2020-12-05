@@ -2,7 +2,6 @@ let express = require('express');
 let router = express.Router();
 
 let db = require('../models/DatabaseHandler');
-let dbh = new db();
 
 //Inital responses
 router.get("/", function(req,res){
@@ -14,7 +13,7 @@ router.get("/AboutUs", function(req,res){
 });
 
 router.get("/SeedDB", function(req,res){
-    dbh.seedDatabase();
+    db.seedDatabase();
     res.render('./main/index', {title: 'Tempoary Seeder Page', layout: 'main'} );
 });
 

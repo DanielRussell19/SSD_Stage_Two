@@ -2,7 +2,6 @@ let express = require('express');
 let router = express.Router();
 
 let db = require('../models/DatabaseHandler');
-let dbh = new db();
 
 //Inital responses
 router.get("/CreateTicket", function(req,res){
@@ -30,6 +29,8 @@ router.post("/DeleteTicket", function(req,res){
 });
 
 router.get("/TicketListing", function(req,res){
+    console.log(req.session.user);
+
     res.render('./ticket/ticketindex', {title: 'Safari Security Ticket Index', layout: 'main'} );
 });
 

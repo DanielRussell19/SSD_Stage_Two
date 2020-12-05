@@ -2,7 +2,6 @@ let express = require('express');
 let router = express.Router();
 
 let db = require('../models/DatabaseHandler');
-let dbh = new db();
 
 //Inital responses
 router.get("/CreateComment", function(req,res){

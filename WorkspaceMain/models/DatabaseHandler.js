@@ -9,11 +9,8 @@ let User = require('../models/User');
 let Ticket = require('../models/Ticket');
 let Comment = require('../models/Comment');
 
-//DBHandler class definition
-class DBHandler{
-
 //DB Creation and Drop//
-createDB(){
+async function createDB(){
     client.connect(url, function (err, db) 
     {
         if(err) throw err;
@@ -25,7 +22,7 @@ createDB(){
 //DB inserts//
 
 //Roles
-insertRoles(){
+async function insertRoles(){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -45,23 +42,8 @@ insertRoles(){
     });
 }
 
-//Users
-insertUser(user){
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
-
-        dbo.collection("users").insertOne(user,function(err,res){
-            if(err) throw err;
-            console.log("User document added");
-        });
-
-        db.close();
-    });
-}
-
 //Tickets
-insertTicket(ticket){
+async function insertTicket(ticket){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -76,7 +58,7 @@ insertTicket(ticket){
 }
 
 //Comments
-insertComment(comment){
+async function insertComment(comment){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -93,7 +75,7 @@ insertComment(comment){
 //DB updates//
 
 //Users
-updateUser(id, user){
+async function updateUser(id, user){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -108,7 +90,7 @@ updateUser(id, user){
 }
 
 //Tickets
-updateTicket(id, ticket){
+async function updateTicket(id, ticket){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -123,7 +105,7 @@ updateTicket(id, ticket){
 }
 
 //Comments
-updateComment(id, comment){
+async function updateComment(id, comment){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -140,7 +122,7 @@ updateComment(id, comment){
 //DB Deletes//
 
 //Users
-deleteUser(id){
+async function deleteUser(id){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -155,7 +137,7 @@ deleteUser(id){
 }
 
 //Tickets
-deleteTicket(id){
+async function deleteTicket(id){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -170,7 +152,7 @@ deleteTicket(id){
 }
 
 //Comments
-deleteComment(id){
+async function deleteComment(id){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -184,88 +166,27 @@ deleteComment(id){
     });
 }
 
-//DB collection drops//
-
-//Users
-dropUsers(){
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
-
-        dbo.collection("users").drop(function(err,res){
-            if(err) throw err;
-            console.log("Users collection dropped");
-        });
-
-        db.close();
-    });
-}
-
-//Tickets
-dropTickets(){
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
-
-        dbo.collection("tickets").drop(function(err,res){
-            if(err) throw err;
-            console.log("Tickets collection dropped");
-        });
-
-        db.close();
-    });
-}
-
-//Comments
-dropComments(){
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
-
-        dbo.collection("comments").drop(function(err,res){
-            if(err) throw err;
-            console.log("Comments collection dropped");
-        });
-
-        db.close();
-    });
-}
-
-//Comments
-dropRoles(){
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
-
-        dbo.collection("roles").drop(function(err,res){
-            if(err) throw err;
-            console.log("Roles collection dropped");
-        });
-
-        db.close();
-    });
-}
-
-//lookups
-async lookupUser(user){
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
-        var result = null;
-
-        dbo.collection("users").findOne(user,function(err,res){
-            if(err) throw err;
-
-            console.log(res);
-            result = res;
-        });
+//gets
+function getUser(user){
+    
+    return new Promise(resolve => {
         
-        db.close();
-        return result;
+        client.connect(url, function(err, db){
+            if(err) throw err;
+            var dbo = db.db("StageTwo");
+    
+            dbo.collection("users").findOne(user, function(err,res){
+                if(err) throw err;
+                console.log(res);
+                resolve(res);
+            });
+    
+            db.close();
+        });
     });
 }
 
-lookupTicket(ticketid){
+async function getTicket(ticketid){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -279,7 +200,7 @@ lookupTicket(ticketid){
     });
 }
 
-lookupComment(ticketid){
+async function getComment(ticketid){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -294,47 +215,71 @@ lookupComment(ticketid){
 }
 
 //database seeder method
-seedDatabase(){
+async function seedDatabase(){
     
     //drop pre-existing data
-    try{
-        this.createDB();
-        this.insertRoles();
-    }
-    catch (error){
-        console.log("Unable to drop database");
-        console.log(error);
-    }
+    this.createDB();
+    this.insertRoles();
 
     //users
-    try {
-        this.insertUser(new User('test', 'test'));  
-    } 
-    catch (error){
-        console.log("Unable to seed users");
-        console.log(error);
-    }
+    client.connect(url, function(err, db){
+        if(err) throw err;
+        var dbo = db.db("StageTwo");
 
-    //tickets
-    try {
-        //this.insertTicket(new Ticket());
-    } 
-    catch (error){
-        console.log("Unable to seed tickets");
-        console.log(error);
-    }
+        var q = [
+            {username: 'test', password: 'test', RoleIDs:[2] },
+            {username: 'Dave', password: 'test', RoleIDs:[1, 2]},
+            {username: 'Lilith', password: 'test', RoleIDs:[1]},
+            {username: 'Paul', password: 'test', RoleIDs:[2]},
+            {username: 'HP', password: 'test', RoleIDs:[3]},
+            {username: 'Amazon', password: 'test', RoleIDs:[3]},
+            {username: 'Qula', password: 'test', RoleIDs:[3]},
+            {username: 'Onion', password: 'test', RoleIDs:[3]}
+        ];
+    
+        dbo.collection("users").insertMany(q,function(err,res){
+        if(err) throw err;
+            console.log("User documents added" + res.insertedCount);
+        });
+    
+        db.close();
+    });  
 
-    //comments
-    try {
-        //this.insertComment(new Comment());
-    } 
-    catch (error){
-        console.log("Unable to seed comments");
-        console.log(error);
-    }
-}
+    // //tickets
+    // q = {
 
+    // };
+
+    // client.connect(url, function(err, db){
+    //     if(err) throw err;
+    //     var dbo = db.db("StageTwo");
+    
+    //     dbo.collection("tickets").insertMany(q,function(err,res){
+    //     if(err) throw err;
+    //         console.log("ticket documents added" + res.insertedCount);
+    //     });
+    
+    //     db.close();
+    // });
+
+    // //comments
+    // q = {
+
+    // };
+
+    // client.connect(url, function(err, db){
+    //     if(err) throw err;
+    //     var dbo = db.db("StageTwo");
+    
+    //     dbo.collection("comments").insertMany(q,function(err,res){
+    //     if(err) throw err;
+    //         console.log("comment documents added" + res.insertedCount);
+    //     });
+    
+    //     db.close();
+    // });
 }
 
 //Exports class DBHandler
-module.exports = DBHandler;
+exports.seedDatabase = seedDatabase;
+exports.getUser = getUser;

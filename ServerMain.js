@@ -5,7 +5,9 @@
 let http = require('http');
 let express = require('express');
 let ehandlebars = require('express-handlebars');
+let session = require('express-session');
 let path = require('path');
+let cookieparser = require('cookie-parser');
 
 //Controllers
 let maincontroller = require('./WorkspaceMain/controllers/MainController');
@@ -31,6 +33,12 @@ app.use(express.urlencoded());
 
 //parse JSON bodies as sent by API
 app.use(express.json());
+
+//cookie parser
+app.use(cookieparser());
+
+//express sessions
+app.use(session({secret: "Your secret key"}));
 
 //router settings
 app.use('/', usercontroller);
