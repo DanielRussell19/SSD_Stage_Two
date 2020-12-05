@@ -7,12 +7,18 @@
 </head> --}}
 <body>
     <div class="header-container">
-        <h1 class="header-title">User Delete</h1>
-        <nav class="header-nav"><a href="/Login" class="header-nav-btn">Login</a> | <a href="/AboutUs" class="header-nav-btn">About Us</a></nav>
+        <h1 class="header-title">Safari Security Ticket Delete User</h1>
     </div>
 
     <div class="middle-container">
-
+        <form method="POST" action="/DeleteUser">
+            <table>
+                <tr>
+                    <p>Are you sure you want to delete your account? {{name}}</p>
+                    <td><input text="Delete" type="submit"><a href="/TicketListing">Return</a></td>
+                </tr>
+            </table>
+        </form>
     </div>
 
     <div class="footer-container">

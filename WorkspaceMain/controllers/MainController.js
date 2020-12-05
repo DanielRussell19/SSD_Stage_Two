@@ -18,7 +18,16 @@ router.get("/SeedDB", function(req,res){
 });
 
 router.use(function(req,res){
-    res.render('./main/error', {title: '404 Oppsie', layout: 'main'} );
+    var error;
+    
+    try{
+        error = req.cookies.error;
+    }
+    catch{
+        error = null;
+    }
+
+    res.render('./main/error', {title: '404 Oppsie', error: error, layout: 'main'} );
     res.status(404);
 });
 

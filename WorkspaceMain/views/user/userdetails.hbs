@@ -8,11 +8,32 @@
 <body>
     <div class="header-container">
         <h1 class="header-title">User Details</h1>
-        <nav class="header-nav"><a href="/Login" class="header-nav-btn">Login</a> | <a href="/AboutUs" class="header-nav-btn">About Us</a></nav>
+        <nav class="header-nav"><a href="/TicketListing" class="header-nav-btn">Return</a> | <a href="/DeleteUser" class="header-nav-btn">Delete Account</a></nav>
     </div>
 
     <div class="middle-container">
-
+        <form method="POST" action="/UpdateUser">
+            <table>
+                <tr>
+                    <td><label for="_id">ID</label><input name="_id" type="text" value={{user._id}}></td>
+                </tr>
+                <tr>
+                    <td><label for="username">username</label><input name="username" type="text" value={{user.username}}></td>
+                </tr>
+                <tr>
+                    <td><label for="password">password</label><input name="password" type="text" value={{user.password}}></td>
+                </tr>
+                <tr>
+                    <td><label for="RoleIDs">RoleIDs</label><input name="RoleIDs" type="text" value={{user.RoleIDs}}></td>
+                </tr>
+                <tr>
+                    <td><label for="isloggedin">isloggedin</label><input name="isloggedin" type="text" value={{user.isloggedin}}></td>
+                </tr>
+                <tr>
+                    <td><input type="submit"></td>
+                </tr>
+            </table>
+        </form>
     </div>
 
     <div class="footer-container">

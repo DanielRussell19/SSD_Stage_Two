@@ -75,22 +75,22 @@ async function insertComment(comment){
 //DB updates//
 
 //Users
-async function updateUser(id, user){
+function updateUser(user){
     return new Promise(resolve => {
         
         client.connect(url, function(err, db){
             if(err) throw err;
             var dbo = db.db("StageTwo");
-    
+            
+            var q = {_id: user._id};
             var newvalues = { $set: {username: user.username, password: user.password, RoleIDs: user.RoleIDs, isloggedin: user.isloggedin} };
 
-            dbo.collection("users").updateOne(id,newvalues,function(err,res){
+            dbo.collection("users").updateOne(q,newvalues,function(err,res){
                 if(err) throw err;
-                console.log("User updated");
-                resolve(true);
+                db.close();
+                console.log("User Modified: " + res.modifiedCount);
+                resolve();
             });
-    
-            db.close();
         });
     });
 }
@@ -128,7 +128,7 @@ async function updateComment(id, comment){
 //DB Deletes//
 
 //Users
-async function deleteUser(id){
+async function deleteUser(user){
 
     return new Promise(resolve => {
         
@@ -136,13 +136,14 @@ async function deleteUser(id){
             if(err) throw err;
             var dbo = db.db("StageTwo");
     
-            dbo.collection("users").deleteOne(id,function(err,res){
+        var q = {_id: user._id};
+
+            dbo.collection("users").deleteOne(q,function(err,res){
                 if(err) throw err;
                 console.log("User document deleted");
+                db.close();
                 resolve(true);
             });
-    
-            db.close();
         });
     });
 }
@@ -187,10 +188,9 @@ function getUser(user){
     
             dbo.collection("users").findOne(user, function(err,res){
                 if(err) throw err;
+                db.close();
                 resolve(res);
             });
-    
-            db.close();
         });
     });
 }
@@ -218,10 +218,9 @@ async function getTickets(){
     
             dbo.collection("tickets").find({}).toArray(function(err,res){
                 if(err) throw err;
+                db.close();
                 resolve(res);
             });
-    
-            db.close();
         });
     });
 }
@@ -254,16 +253,14 @@ async function getComments(ticketid){
     });
 }
 
-function loginUser(user){
+async function loginUser(user){
     user.isloggedin = true;
-    updateUser(user._id, user);
-    console.log('User logged');
+    await updateUser(user);
 }
 
-function logoutUser(user){
+async function logoutUser(user){
     user.isloggedin = false;
-    updateUser(user._id, user);
-    console.log('User log out');
+    await updateUser(user);
 }
 
 //database seeder method
