@@ -15,6 +15,9 @@
         <form method="POST" action="/UpdateUser">
             <table>
                 <tr>
+                    <td><hidden name="RoleIDs" value= {{user.RoleIDs}}></td>
+                </tr>
+                <tr>
                     <td><label for="_id">ID</label><input name="_id" type="text" value={{user._id}}></td>
                 </tr>
                 <tr>
@@ -22,9 +25,6 @@
                 </tr>
                 <tr>
                     <td><label for="password">password</label><input name="password" type="text" value={{user.password}}></td>
-                </tr>
-                <tr>
-                    <td><label for="RoleIDs">RoleIDs</label><input name="RoleIDs" type="text" value={{user.RoleIDs}}></td>
                 </tr>
                 <tr>
                     <td><label for="isloggedin">isloggedin</label><input name="isloggedin" type="text" value={{user.isloggedin}}></td>

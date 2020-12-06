@@ -7,32 +7,47 @@
 </head> --}}
 <body>
     <div class="header-container">
-        <h1 class="header-title">User Details</h1>
-        <nav class="header-nav"><a href="/TicketListing" class="header-nav-btn">Return</a> | <a href="/DeleteTicket" class="header-nav-btn">Delete Account</a></nav>
+        <h1 class="header-title">Safari Security Ticket Index</h1>
+        <nav class="header-nav"><a href="/TicketListing" class="header-nav-btn">Return</a></nav>
     </div>
 
     <div class="middle-container">
         <form method="POST" action="/UpdateTicket">
-            <table>
-                <tr>
-                    <td><label for="_id">ID</label><input name="_id" type="text" value={{user._id}}></td>
-                </tr>
-                <tr>
-                    <td><label for="username">username</label><input name="username" type="text" value={{user.username}}></td>
-                </tr>
-                <tr>
-                    <td><label for="password">password</label><input name="password" type="text" value={{user.password}}></td>
-                </tr>
-                <tr>
-                    <td><label for="RoleIDs">RoleIDs</label><input name="RoleIDs" type="text" value={{user.RoleIDs}}></td>
-                </tr>
-                <tr>
-                    <td><label for="isloggedin">isloggedin</label><input name="isloggedin" type="text" value={{user.isloggedin}}></td>
-                </tr>
-                <tr>
-                    <td><input type="submit"></td>
-                </tr>
-            </table>
+            <input type="hidden" name="_id" value={{ticket._id}}>
+            <div style="border: black solid 2px;">
+                <table>
+                    <tr>
+                        <td><input type="text" name="title" value={{ticket.Title}}></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" name="ticketnumber" value={{ticket.TicketNumber}}></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" name="type" value={{ticket.Type}}></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" name="status" value={{ticket.Status}}></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" name="userid" value={{ticket.UserID}}></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" name="priority" value={{ticket.Priority}}></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" name="dos" value={{ticket.DOS}}></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" name="description" value={{ticket.Description}}></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/DeleteTicket/{{ticket._id}}">Delete Ticket</a></td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit"></td>
+                    </tr>
+                </table>
+            </div>
         </form>
     </div>
 

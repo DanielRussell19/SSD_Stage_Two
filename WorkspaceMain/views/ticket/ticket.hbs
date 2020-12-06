@@ -8,11 +8,41 @@
 <body>
     <div class="header-container">
         <h1 class="header-title">Safari Security Ticket Index</h1>
-        <nav class="header-nav"><a href="/Login" class="header-nav-btn">Login</a> | <a href="/AboutUs" class="header-nav-btn">About Us</a></nav>
+        <nav class="header-nav"><a href="/TicketListing" class="header-nav-btn">Return</a></nav>
     </div>
 
     <div class="middle-container">
-
+            <div style="border: black solid 2px;">
+                <table>
+                    <tr>
+                        <td><h3>{{ticket.Title}}</h3></td>
+                    </tr>
+                    <tr>
+                        <td>TicketNumber: {{ticket.TicketNumber}}</td>
+                    </tr>
+                    <tr>
+                        <td>Type: {{ticket.Type}}</td>
+                    </tr>
+                    <tr>
+                        <td>Status: {{ticket.Status}}</td>
+                    </tr>
+                    <tr>
+                        <td>Created by: {{ticket.UserID}}</td>
+                    </tr>
+                    <tr>
+                        <td>Priority: {{ticket.Priority}}</td>
+                    </tr>
+                    <tr>
+                        <td>Date of Submission: {{ticket.DOS}}</td>
+                    </tr>
+                    <tr>
+                        <td>Description: {{ticket.Description}}</td>
+                    </tr>
+                    <tr>
+                        <td><a href="/UpdateTicket/{{ticket._id}}">Update Ticket</a></td>
+                    </tr>
+                </table>
+            </div>
     </div>
 
     <div class="footer-container">

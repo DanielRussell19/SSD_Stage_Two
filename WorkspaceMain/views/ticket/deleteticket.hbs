@@ -11,10 +11,11 @@
     </div>
 
     <div class="middle-container">
-        <form method="POST">
+        <form method="POST" action="/DeleteTicket">
+            <input type="hidden" name="_id" value={{ticket._id}}>
             <table>
                 <tr>
-                    <p>Are you sure you want to delete this Ticket? {{name}}</p>
+                    <p>Are you sure you want to delete this Ticket?</p>
                     <td><input text="Delete" type="submit"><a href="/TicketListing">Return</a></td>
                 </tr>
             </table>

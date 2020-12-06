@@ -10,38 +10,62 @@ router.get("/CreateTicket", function(req,res){
     res.render('./ticket/createticket', {title: 'Ticket Creation', layout: 'main'} );
 });
 
-router.post("/CreateTicket", function(req,res){
+router.post("/CreateTicket", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
     res.render('./ticket/createticket', {title: 'Ticket Creation', layout: 'main'} );
 });
 
-router.get("/UpdateTicket", function(req,res){
+router.get("/UpdateTicket/:id", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
-    res.render('./ticket/updateticket', {title: 'Update Ticket', layout: 'main'} );
+    var ticketid = req.params.id;
+
+    console.log(ticketid);
+
+    var ticket = await db.getTicket(ticketid);
+
+    console.log(ticket);
+
+    res.render('./ticket/updateticket', {title: 'Update Ticket',ticket: ticket, layout: 'main'} );
 });
 
 router.post("/UpdateTicket", function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
-    res.render('./ticket/updateticket', {title: 'Update Ticket', layout: 'main'} );
+    var ticket = { _id: req.body._id,
+        Title: req.body.title,
+        UserID: req.body.userid,
+        TicketNumber: req.body.ticketnumber,
+        DOS: req.body.dos,
+        Priority: req.body.priority,
+        Status: req.body.status,
+        Description: req.body.description,
+        Type: req.body.type}
+
+    db.updateTicket(ticket);
+    res.redirect('/TicketListing');
 });
 
-router.get("/DeleteTicket", function(req,res){
+router.get("/DeleteTicket/:id", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
-    res.render('./ticket/deleteticket', {title: 'Delete Ticket', layout: 'main'} );
+    var ticketid = req.params.id;
+    var ticket = await db.getTicket(ticketid);
+
+    res.render('./ticket/deleteticket', {title: 'Delete Ticket', ticket: ticket, layout: 'main'} );
 });
 
-router.post("/DeleteTicket", function(req,res){
+router.post("/DeleteTicket", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
-    res.render('./ticket/deleteticket', {title: 'Delete Ticket', layout: 'main'} );
+    var id = req.body._id;
+    db.deleteTicket(id);
+
+    res.redirect('/TicketListing');
 });
 
 router.get("/TicketListing", async function(req,res){
-    console.log(req.session.user);
     if(!req.session.user){res.redirect('/Error');}
 
     var tickets = await db.getTickets();
@@ -49,10 +73,13 @@ router.get("/TicketListing", async function(req,res){
     res.render('./ticket/ticketindex', {title: 'Safari Security Ticket Index', tickets: tickets, layout: 'main'} );
 });
 
-router.get("/ViewTicket", function(req,res){
+router.get("/ViewTicket/:id", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
-    res.render('./ticket/ticket', {title: 'Safari Security Ticket', layout: 'main'} );
+    var ticketid = req.params.id;
+    var ticket = await db.getTicket(ticketid);
+
+    res.render('./ticket/ticket', {title: 'Safari Security Ticket', ticket: ticket, layout: 'main'} );
 });
 
 module.exports = router;

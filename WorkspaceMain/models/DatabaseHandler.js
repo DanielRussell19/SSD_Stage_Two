@@ -3,6 +3,7 @@
 
 //constants
 const client = require('mongodb').MongoClient;
+const {ObjectId} = require('mongodb');
 const url = "mongodb://localhost:27017/StageTwo";
 
 let User = require('../models/User');
@@ -22,8 +23,9 @@ async function createDB(){
 //DB inserts//
 
 //Roles
-async function insertRoles(){
-    client.connect(url, function(err, db){
+function insertRoles(){
+    return new Promise(resolve => {
+        client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
 
@@ -39,11 +41,13 @@ async function insertRoles(){
         });
 
         db.close();
+        resolve();
+        });
     });
 }
 
 //Tickets
-async function insertTicket(ticket){
+function insertTicket(ticket){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -58,7 +62,7 @@ async function insertTicket(ticket){
 }
 
 //Comments
-async function insertComment(comment){
+function insertComment(comment){
     client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
@@ -77,12 +81,11 @@ async function insertComment(comment){
 //Users
 function updateUser(user){
     return new Promise(resolve => {
-        
         client.connect(url, function(err, db){
             if(err) throw err;
             var dbo = db.db("StageTwo");
-            
-            var q = {_id: user._id};
+
+            var q = {_id: ObjectId(user._id)};
             var newvalues = { $set: {username: user.username, password: user.password, RoleIDs: user.RoleIDs, isloggedin: user.isloggedin} };
 
             dbo.collection("users").updateOne(q,newvalues,function(err,res){
@@ -96,17 +99,32 @@ function updateUser(user){
 }
 
 //Tickets
-async function updateTicket(id, ticket){
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
-
-        dbo.collection("tickets").updateOne(id,ticket,function(err,res){
+function updateTicket(ticket){
+    return new Promise(resolve => {
+        client.connect(url, function(err, db){
             if(err) throw err;
-            console.log("Ticket updated");
-        });
+            var dbo = db.db("StageTwo");
 
-        db.close();
+            var q = {_id: ObjectId(ticket._id)};
+
+            var newvalues = { $set: { Title: ticket.Title, TicketNumber: ticket.TicketNumber,
+                 Type: ticket.Type,
+                  Status: ticket.Status,
+                   UserID: ticket.UserID,
+                    Priority: ticket.Priority,
+                     DOS: ticket.DOS,
+                      Description: ticket.Description } };
+
+            console.log(q);
+            console.log(newvalues);
+
+            dbo.collection("tickets").updateOne(q, newvalues,function(err,res){
+                if(err) throw err;
+                db.close()
+                console.log("Ticket updated"+res.modifiedCount);
+                resolve();
+            });
+        });
     });
 }
 
@@ -128,15 +146,14 @@ async function updateComment(id, comment){
 //DB Deletes//
 
 //Users
-async function deleteUser(user){
-
+function deleteUser(user){
     return new Promise(resolve => {
         
         client.connect(url, function(err, db){
             if(err) throw err;
             var dbo = db.db("StageTwo");
     
-        var q = {_id: user._id};
+        var q = {_id: ObjectId(user._id)};
 
             dbo.collection("users").deleteOne(q,function(err,res){
                 if(err) throw err;
@@ -149,17 +166,22 @@ async function deleteUser(user){
 }
 
 //Tickets
-async function deleteTicket(id){
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
-
-        dbo.collection("tickets").deleteOne(id,function(err,res){
+function deleteTicket(id){
+    return new Promise(resolve => {
+        
+        client.connect(url, function(err, db){
             if(err) throw err;
-            console.log("Ticket document deleted");
-        });
+            var dbo = db.db("StageTwo");
+    
+            var q = {_id: ObjectId(id)};
 
-        db.close();
+            dbo.collection("tickets").deleteOne(q,function(err,res){
+                if(err) throw err;
+                console.log("Ticket document deleted");
+                db.close();
+                resolve(true);
+            });
+        });
     });
 }
 
@@ -185,7 +207,7 @@ function getUser(user){
         client.connect(url, function(err, db){
             if(err) throw err;
             var dbo = db.db("StageTwo");
-    
+
             dbo.collection("users").findOne(user, function(err,res){
                 if(err) throw err;
                 db.close();
@@ -195,19 +217,23 @@ function getUser(user){
     });
 }
 
-async function getTicket(ticketid){
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
+function getTicket(ticketid){
+    return new Promise(resolve => {
+        
+            client.connect(url, function(err, db){
+                if(err) throw err;
+                var dbo = db.db("StageTwo");
+    
+                q = {_id: ObjectId(ticketid)};
 
-        dbo.collection("tickets").findOne(ticketid,function(err,res){
-            if(err) throw err;
-            return res;
-        });
-
-        db.close();
+                dbo.collection("tickets").findOne(q,function(err,res){
+                    if(err) throw err;
+                    db.close();
+                    resolve(res);
+                });
+            });
     });
-}
+};
 
 async function getTickets(){
     return new Promise(resolve => {
@@ -253,18 +279,72 @@ async function getComments(ticketid){
     });
 }
 
-async function loginUser(user){
-    user.isloggedin = true;
-    await updateUser(user);
+function dropCollections(){
+    return new Promise(resolve => {
+        
+        try {
+            
+            client.connect(url, function(err, db){
+                if(err) throw err;
+                var dbo = db.db("StageTwo");
+        
+                dbo.collection("tickets").drop(function(err, res){
+                    if(err) throw err;
+                });
+    
+                db.close();
+            });
+
+        } catch (error) {
+            console.error();
+        }
+
+        try {
+            client.connect(url, function(err, db){
+                if(err) throw err;
+                var dbo = db.db("StageTwo");
+    
+                dbo.collection("users").drop(function(err, res){
+                    if(err) throw err;
+                });
+    
+                db.close();
+            });   
+        } catch (error) {
+            console.error();
+        }
+
+        try {
+            client.connect(url, function(err, db){
+                if(err) throw err;
+                var dbo = db.db("StageTwo");
+    
+                dbo.collection("roles").drop(function(err, res){
+                    if(err) throw err;
+                });
+    
+                db.close();
+            });
+        } catch (error) {
+            console.error();
+        }
+
+        resolve();
+    });
 }
 
-async function logoutUser(user){
+function loginUser(user){
+    user.isloggedin = true;
+    updateUser(user);
+}
+
+function logoutUser(user){
     user.isloggedin = false;
-    await updateUser(user);
+    updateUser(user);
 }
 
 //database seeder method
-async function seedDatabase(){
+function seedDatabase(){
     
     //drop pre-existing data
     createDB();
@@ -294,11 +374,13 @@ async function seedDatabase(){
         db.close();
     });  
 
+    var user = getUser(new User('test', 'test'));
+
     //tickets
     q = [
-        {Title: "Broken HTTP",UserID: '5fca95aab218b22208ccdca6', TicketNumber: 1, DOS: Date.now(), Priority:'low', Status: 'open', Description: 'test', Type: 'development'},
-        {Title: "What's the Wifi password?",UserID: '5fca95aab218b22208ccdca6', TicketNumber: 2, DOS: Date.now(), Priority:'medium', Status: 'closed', Description: 'test', Type: 'development'},
-        {Title: "ERROR 404, like what?!!!",UserID: '5fca95aab218b22208ccdca6', TicketNumber: 2, DOS: Date.now(), Priority:'high', Status: 'resolved', Description: 'test', Type: 'development'}
+        {Title: "Broken HTTP",UserID: user._id, TicketNumber: 1, DOS: Date.now(), Priority:'low', Status: 'open', Description: 'test', Type: 'development'},
+        {Title: "What's the Wifi password?",UserID: user._id, TicketNumber: 2, DOS: Date.now(), Priority:'medium', Status: 'closed', Description: 'test', Type: 'development'},
+        {Title: "ERROR 404, like what?!!!",UserID: user._id, TicketNumber: 2, DOS: Date.now(), Priority:'high', Status: 'resolved', Description: 'test', Type: 'development'}
     ];
 
     client.connect(url, function(err, db){
@@ -333,9 +415,15 @@ async function seedDatabase(){
 
 //Exports class DBHandler
 exports.seedDatabase = seedDatabase;
+exports.dropCollections = dropCollections;
+
 exports.getUser = getUser;
 exports.loginUser = loginUser;
 exports.logoutUser = logoutUser;
 exports.updateUser = updateUser;
 exports.deleteUser = deleteUser;
+
 exports.getTickets = getTickets;
+exports.getTicket = getTicket;
+exports.updateTicket = updateTicket;
+exports.deleteTicket = deleteTicket;

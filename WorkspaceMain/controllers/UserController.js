@@ -30,6 +30,7 @@ router.post("/Login", async function(req,res){
         }
         else if(user.isloggedin == false){
             user.isloggedin = true;
+            console.log("Login");
             db.loginUser(user);
     
             req.session.user = user;
@@ -46,11 +47,12 @@ router.get("/Loginout", function(req,res){
     }
 });
 
-router.post("/Loginout", function(req,res){
+router.post("/Loginout", async function(req,res){
     if(!req.session.user){res.cookie('error', 'Session Invalid'); res.redirect('/Error');}
     else{
         var user = req.session.user;
         user.isloggedin = false;
+        console.log("Logout");
         db.logoutUser(user);
     
         req.session.user = null;
@@ -66,10 +68,10 @@ router.get("/UpdateUser", function(req,res){
     }
 });
 
-router.post("/UpdateUser", function(req,res){
+router.post("/UpdateUser", async function(req,res){
     if(!req.session.user){res.cookie('error', 'Session Invalid'); res.redirect('/Error');}
     else{
-        var user = {_id: req.body._id, username: req.body.username, password: req.body.password, RolesIDs: req.body.RolesIDs, isloggedin: req.body.isloggedin};
+        var user = {_id: req.body._id, username: req.body.username, password: req.body.password, RolesIDs: req.body.RoleIDs, isloggedin: req.body.isloggedin};
         db.updateUser(user);
         req.session.user = user;
         res.redirect("/TicketListing");
@@ -83,7 +85,7 @@ router.get("/DeleteUser", function(req,res){
     }
 });
 
-router.post("/DeleteUser", function(req,res){
+router.post("/DeleteUser", async function(req,res){
     if(!req.session.user){res.cookie('error', 'Session Invalid'); res.redirect('/Error');}
     else{
         var user = req.session.user;

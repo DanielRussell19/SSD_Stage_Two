@@ -17,6 +17,11 @@ router.get("/SeedDB", function(req,res){
     res.render('./main/index', {title: 'Tempoary Seeder Page', layout: 'main'} );
 });
 
+router.get("/DropDB", function(req,res){
+    db.dropCollections();
+    res.render('./main/index', {title: 'Tempoary Seeder Page', layout: 'main'} );
+});
+
 router.use(function(req,res){
     var error;
     
