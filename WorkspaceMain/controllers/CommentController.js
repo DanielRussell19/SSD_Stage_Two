@@ -3,6 +3,8 @@ let router = express.Router();
 
 let db = require('../models/DatabaseHandler');
 
+const { check, validationResult } = require('express-validator');
+
 //Inital responses
 router.get("/CreateComment", function(req,res){
     res.render('./comment/createcomment', {title: 'Comment Creation', layout: 'main'} );

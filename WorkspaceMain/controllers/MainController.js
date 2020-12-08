@@ -12,8 +12,9 @@ router.get("/AboutUs", function(req,res){
     res.render('./main/aboutus', {title: 'Safari Security About Us', layout: 'main'} );
 });
 
-router.get("/SeedDB", function(req,res){
+router.get("/SeedDB", async function(req,res){
     db.seedDatabase();
+
     res.render('./main/index', {title: 'Tempoary Seeder Page', layout: 'main'} );
 });
 

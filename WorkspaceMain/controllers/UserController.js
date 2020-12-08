@@ -4,6 +4,8 @@ let router = express.Router();
 let db = require('../models/DatabaseHandler');
 let User = require('../models/User');
 
+const { check, validationResult } = require('express-validator');
+
 //Inital responses
 router.get("/Login", function(req,res){
     if(req.session.user != null){res.redirect('/TicketListing');}
@@ -12,7 +14,11 @@ router.get("/Login", function(req,res){
     }
 });
 
-router.post("/Login", async function(req,res){
+router.post("/Login",[check('username').escape(), check('password').escape()], async function(req,res){
+    
+console.log(req.body.username);
+console.log(req.body.password);
+
     if(!req.body.username || !req.body.password){
         res.cookie('error', 'Please fill both fields');
         res.redirect("/Login");
@@ -68,7 +74,7 @@ router.get("/UpdateUser", function(req,res){
     }
 });
 
-router.post("/UpdateUser", async function(req,res){
+router.post("/UpdateUser",[check('username').escape(), check('password').escape()], async function(req,res){
     if(!req.session.user){res.cookie('error', 'Session Invalid'); res.redirect('/Error');}
     else{
         var user = {_id: req.body._id, username: req.body.username, password: req.body.password, RolesIDs: req.body.RoleIDs, isloggedin: req.body.isloggedin};

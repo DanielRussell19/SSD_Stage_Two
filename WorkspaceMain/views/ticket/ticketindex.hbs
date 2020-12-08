@@ -14,31 +14,23 @@
     <div class="middle-container">
         <nav class="middle-nav"><a href="/CreateTicket">Create Ticket</a></nav>
         {{#each tickets}}
-            <div style="border: black solid 2px;">
+            <div>
                 <table>
-                    <tr>
+                    <tr style="border: solid black 2px;">
                         <td><h3>{{this.Title}}</h3></td>
                     </tr>
-                    <tr>
-                        <td>TicketNumber: {{this.TicketNumber}}</td>
+                    <tr style="border: solid black 2px;">
+                        <td style="border: solid black 2px;">
+                            TicketNumber: {{this.TicketNumber}}<br>
+                            Type: {{this.Type}}<br>
+                            Status: {{this.Status}}<br>
+                            Created by: {{this.UserID}}<br>
+                            Priority: {{this.Priority}}<br>
+                            Date of Submission: {{this.DOS}}
+                        </td>
                     </tr>
                     <tr>
-                        <td>Type: {{this.Type}}</td>
-                    </tr>
-                    <tr>
-                        <td>Status: {{this.Status}}</td>
-                    </tr>
-                    <tr>
-                        <td>Created by: {{this.UserID}}</td>
-                    </tr>
-                    <tr>
-                        <td>Priority: {{this.Priority}}</td>
-                    </tr>
-                    <tr>
-                        <td>Date of Submission: {{this.DOS}}</td>
-                    </tr>
-                    <tr>
-                        <td><a href="/ViewTicket/{{this._id}}">View Ticket</a>|<a href="/UpdateTicket">Update Ticket</a></td>
+                        <td><a href="/ViewTicket/{{this._id}}">View</a></td>
                     </tr>
                 </table>
             </div>

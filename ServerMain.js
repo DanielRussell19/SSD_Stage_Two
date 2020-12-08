@@ -39,7 +39,6 @@ app.use(cookieparser());
 
 //express sessions
 app.use(session({secret: "Your secret key"}));
-
 //router settings
 app.use('/', usercontroller);
 app.use('/', ticketcontroller);

@@ -17,31 +17,33 @@
             <div style="border: black solid 2px;">
                 <table>
                     <tr>
-                        <td><input type="text" name="title" value={{ticket.Title}}></td>
+                        <td>Title:<input type="text" name="title" value={{ticket.Title}}></td>
                     </tr>
                     <tr>
-                        <td><input type="text" name="ticketnumber" value={{ticket.TicketNumber}}></td>
+                        <td><input type="hidden" name="ticketnumber" value={{ticket.TicketNumber}}></td>
                     </tr>
                     <tr>
-                        <td><input type="text" name="type" value={{ticket.Type}}></td>
+                        <td>Type:<input type="text" name="type" value={{ticket.Type}}></td>
                     </tr>
                     <tr>
-                        <td><input type="text" name="status" value={{ticket.Status}}></td>
+                        <td>Status:<input type="text" name="status" value={{ticket.Status}}></td>
                     </tr>
                     <tr>
-                        <td><input type="text" name="userid" value={{ticket.UserID}}></td>
+                        <td><input type="hidden" name="userid" value={{ticket.UserID}}></td>
                     </tr>
                     <tr>
-                        <td><input type="text" name="priority" value={{ticket.Priority}}></td>
+                        <td>Priority:<input type="text" name="priority" value={{ticket.Priority}}></td>
                     </tr>
                     <tr>
-                        <td><input type="text" name="dos" value={{ticket.DOS}}></td>
+                        <td><input type="hidden" name="dos" value={{ticket.DOS}}></td>
                     </tr>
                     <tr>
-                        <td><input type="text" name="description" value={{ticket.Description}}></td>
+                        <td>Description:<input type="text" name="description" value={{ticket.Description}}></td>
                     </tr>
                     <tr>
+                        {{#if creator}}
                         <td><a href="/DeleteTicket/{{ticket._id}}">Delete Ticket</a></td>
+                        {{/if}}
                     </tr>
                     <tr>
                         <td><input type="submit"></td>

@@ -1,10 +1,3 @@
-{{!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head> --}}
 <body>
     <div class="header-container">
         <h1 class="header-title">Safari Security Ticket Index</h1>
@@ -12,37 +5,43 @@
     </div>
 
     <div class="middle-container">
-            <div style="border: black solid 2px;">
+            <div>
                 <table>
-                    <tr>
+                    <tr style="border: solid black 2px;">
                         <td><h3>{{ticket.Title}}</h3></td>
                     </tr>
-                    <tr>
-                        <td>TicketNumber: {{ticket.TicketNumber}}</td>
+                    <tr style="border: solid black 2px;">
+                        <td style="border: solid black 2px;">
+                            TicketNumber: {{ticket.TicketNumber}}<br>
+                            Type: {{ticket.Type}}<br>
+                            Status: {{ticket.Status}}<br>
+                            Created by: {{ticket.UserID}}<br>
+                            Priority: {{ticket.Priority}}<br>
+                            Date of Submission: {{ticket.DOS}}
+                        </td>
                     </tr>
                     <tr>
-                        <td>Type: {{ticket.Type}}</td>
+                        <td style="border: solid black 2px;">Description: {{ticket.Description}}</td>
                     </tr>
                     <tr>
-                        <td>Status: {{ticket.Status}}</td>
-                    </tr>
-                    <tr>
-                        <td>Created by: {{ticket.UserID}}</td>
-                    </tr>
-                    <tr>
-                        <td>Priority: {{ticket.Priority}}</td>
-                    </tr>
-                    <tr>
-                        <td>Date of Submission: {{ticket.DOS}}</td>
-                    </tr>
-                    <tr>
-                        <td>Description: {{ticket.Description}}</td>
-                    </tr>
-                    <tr>
+                        {{#if creator}}
                         <td><a href="/UpdateTicket/{{ticket._id}}">Update Ticket</a></td>
+                        {{/if}}
                     </tr>
                 </table>
             </div>
+
+        {{#unless closed}}
+            <div>
+                <table style="border: solid black 2px;">
+                    {{#each comments}}
+                        <tr>
+                            <td style="border: solid black 2px;">{{this.Content}}<br>Created by: {{this.UserID}} - Submitted: {{this.DOS}}</td>
+                        </tr>
+                    {{/each}}
+                </table>
+            </div>
+        {{/unless}}
     </div>
 
     <div class="footer-container">
@@ -52,4 +51,3 @@
         </p>
     </div>
 </body>
-{{!-- </html> --}}

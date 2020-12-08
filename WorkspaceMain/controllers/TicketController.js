@@ -3,6 +3,8 @@ let router = express.Router();
 
 let db = require('../models/DatabaseHandler');
 
+const { check, validationResult } = require('express-validator');
+
 //Inital responses
 router.get("/CreateTicket", function(req,res){
     if(!req.session.user){res.redirect('/Error');}
@@ -79,7 +81,20 @@ router.get("/ViewTicket/:id", async function(req,res){
     var ticketid = req.params.id;
     var ticket = await db.getTicket(ticketid);
 
-    res.render('./ticket/ticket', {title: 'Safari Security Ticket', ticket: ticket, layout: 'main'} );
+    var creator = false;
+    var closed = false;
+
+    var comments = await db.getComments(ticketid);
+
+    if(ticket.UserID == req.session.user._id){
+        creator = true;
+    }
+
+    if(ticket.Status == 'closed'){
+        closed = true;
+    }
+
+    res.render('./ticket/ticket', {title: 'Safari Security Ticket', ticket: ticket, comments: comments, creator: creator, closed: closed, layout: 'main'} );
 });
 
 module.exports = router;
