@@ -41,7 +41,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><input type="hidden" name="userid" value={{ticket.UserID}}></td>
+                        <td><input type="hidden" name="userid" value={{ticket.User._id}}></td>
+                        <td><input type="hidden" name="username" value={{ticket.User.username}}></td>
                     </tr>
                     <tr>
                         <td>Priority:<select required name="priority">

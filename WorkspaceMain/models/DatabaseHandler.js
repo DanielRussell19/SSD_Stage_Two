@@ -119,7 +119,7 @@ function updateTicket(ticket){
             var newvalues = { $set: { Title: ticket.Title, TicketNumber: ticket.TicketNumber,
                  Type: ticket.Type,
                   Status: ticket.Status,
-                   UserID: ticket.UserID,
+                   User: ticket.User,
                     Priority: ticket.Priority,
                      DOS: ticket.DOS,
                       Description: ticket.Description,
@@ -144,7 +144,7 @@ function updateComment(comment){
 
             var q = {_id: ObjectId(comment._id)};
 
-            var newvalues = { $set: { UserID: comment.UserID, TicketID: comment.TicketID, DOS: comment.DOS, Content: comment.Content}};
+            var newvalues = { $set: { User: comment.User, TicketID: comment.TicketID, DOS: comment.DOS, Content: comment.Content}};
 
             dbo.collection("comments").updateOne(q, newvalues,function(err,res){
                 if(err) throw err;
@@ -243,7 +243,7 @@ function getUsers(){
             if(err) throw err;
             var dbo = db.db("StageTwo");
 
-            dbo.collection("users").find({}).toArray(function(err,res){
+            dbo.collection("users").find({}, {_id: 1, username: 1}).toArray(function(err,res){
                 if(err) throw err;
                 db.close();
                 resolve(res);
@@ -261,7 +261,7 @@ function getUserByID(id){
 
             id = ObjectId(id);
 
-            dbo.collection("users").findOne({_id: id}, function(err,res){
+            dbo.collection("users").findOne({_id: id},{_id: 1, username: 1}, function(err,res){
                 if(err) throw err;
                 db.close();
                 resolve(res);
@@ -465,9 +465,9 @@ function seedDatabase(){
 
         //tickets
         var q2 = [
-            {Title: "Broken HTTP",UserID: null, TicketNumber: 1, DOS: new Date(), Priority:'low', Status: 'open', Description: 'test', Type: 'development', Assignee: null},
-            {Title: "What's the Wifi password?",UserID: null, TicketNumber: 2, DOS: new Date(), Priority:'medium', Status: 'closed', Description: 'test', Type: 'development', Assignee: null},
-            {Title: "ERROR 404, like what?!!!",UserID: null, TicketNumber: 2, DOS: new Date(), Priority:'high', Status: 'resolved', Description: 'test', Type: 'development', Assignee: null}
+            {Title: "Broken HTTP",User: null, TicketNumber: 1, DOS: new Date(), Priority:'low', Status: 'open', Description: 'test', Type: 'development', Assignee: null},
+            {Title: "What's the Wifi password?",User: null, TicketNumber: 2, DOS: new Date(), Priority:'medium', Status: 'closed', Description: 'test', Type: 'development', Assignee: null},
+            {Title: "ERROR 404, like what?!!!",User: null, TicketNumber: 2, DOS: new Date(), Priority:'high', Status: 'resolved', Description: 'test', Type: 'development', Assignee: null}
         ];
     
          dbo.collection("tickets").insertMany(q2,function(err,res){
@@ -476,11 +476,11 @@ function seedDatabase(){
         });
 
         var q3 = [
-            {UserID:null, TicketID: null, DOS: new Date(), Content: 'test'},
-            {UserID:null, TicketID: null, DOS: new Date(), Content: 'tester'},
-            {UserID:null, TicketID: null, DOS: new Date(), Content: 'Apples'},
-            {UserID:null, TicketID: null, DOS: new Date(), Content: 'Problems'},
-            {UserID:null, TicketID: null, DOS: new Date(), Content: 'Your correct!'}
+            {User:null, TicketID: null, DOS: new Date(), Content: 'test'},
+            {User:null, TicketID: null, DOS: new Date(), Content: 'tester'},
+            {User:null, TicketID: null, DOS: new Date(), Content: 'Apples'},
+            {User:null, TicketID: null, DOS: new Date(), Content: 'Problems'},
+            {User:null, TicketID: null, DOS: new Date(), Content: 'Your correct!'}
         ];
 
         dbo.collection("comments").insertMany(q3,function(err,res){
@@ -499,13 +499,12 @@ async function fixrelationships(){
     var user = await getUser(new User('Tester', 'test'));
 
     var ticketid = tickets[0]._id;
-    var userid = user._id;
     var i = 0;
 
     do{
         var ticket = tickets[i];
-        ticket.UserID = userid;
-        ticket.Assignee = user;
+        ticket.User = {_id: user._id, username: user.username};
+        ticket.Assignee = {_id: user._id, username: user.username};
         updateTicket(ticket);
         i = i+1;
     }while(tickets[i] != null);
@@ -514,7 +513,7 @@ async function fixrelationships(){
 
     do{
         var comment = comments[i];
-        comment.UserID = userid;
+        comment.User = {_id: user._id, username: user.username};
         comment.TicketID = ticketid;
         updateComment(comment);
         i = i+1;

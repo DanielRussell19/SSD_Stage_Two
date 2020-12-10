@@ -20,10 +20,18 @@ router.post("/CreateTicket", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
     var user = req.session.user;
-    var assigneduser = await db.getUserByID(req.body.assignee);
+    var assigneduser;
+
+    if(req.body.assignee == null || req.body.assignee == 'null'){
+        assigneduser = null;
+    }
+    else{
+        var temp = await db.getUserByID(req.body.assignee);
+        assigneduser = {_id: temp._id, username: temp.username};
+    }
 
     var ticket = {Title: req.body.title,
-         UserID: user._id,
+         User: {_id: user._id, username: user.username},
           TicketNumber: null,
            DOS: new Date(),
             Priority: req.body.priority,
@@ -42,6 +50,9 @@ router.get("/UpdateTicket/:id", async function(req,res){
     var ticketid = req.params.id;
 
     var ticket = await db.getTicket(ticketid);
+
+    if(req.session.user._id != ticket.User._id){res.redirect('/Error');}
+
     var users = await db.getUsers();
 
     res.render('./ticket/updateticket', {title: 'Update Ticket',ticket: ticket, users: users, layout: 'main'} );
@@ -52,20 +63,22 @@ router.get("/UpdateTicket/:id", async function(req,res){
 router.post("/UpdateTicket", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
+    if(req.session.user._id != req.body.userid){res.redirect('/Error');}
+
     if(req.body.assigneenew == null || req.body.assigneenew == 'null'){
 
-        user = await db.getUserByID(req.body.assigneeold)
+        var user = await db.getUserByID(req.body.assigneeold);
 
         var ticket = { _id: req.body._id,
             Title: req.body.title,
-            UserID: req.body.userid,
+            User: {_id: req.body.userid, username: req.body.username},
             TicketNumber: req.body.ticketnumber,
             DOS: req.body.dos,
             Priority: req.body.priority,
             Status: req.body.status,
             Description: req.body.description,
             Type: req.body.type,
-            Assignee: user};
+            Assignee: {_id: user._id, username: user.username}};
     
         db.updateTicket(ticket);
         res.redirect('/ViewTicket/'+req.body._id);
@@ -74,18 +87,18 @@ router.post("/UpdateTicket", async function(req,res){
     }
     else{
 
-    user = await db.getUserByID(req.body.assigneenew)
+    var user = await db.getUserByID(req.body.assigneenew)
 
     var ticket = { _id: req.body._id,
         Title: req.body.title,
-        UserID: req.body.userid,
+        User: {_id: req.body.userid, username: req.body.username},
         TicketNumber: req.body.ticketnumber,
         DOS: req.body.dos,
         Priority: req.body.priority,
         Status: req.body.status,
         Description: req.body.description,
         Type: req.body.type,
-        Assignee: user};
+        Assignee: {_id: user._id, username: user.username}};
 
     db.updateTicket(ticket);
     res.redirect('/ViewTicket/'+req.body._id);
@@ -98,6 +111,8 @@ router.get("/DeleteTicket/:id", async function(req,res){
 
     var ticketid = req.params.id;
     var ticket = await db.getTicket(ticketid);
+
+    if(req.session.user._id != ticket.User._id){res.redirect('/Error');}
 
     res.render('./ticket/deleteticket', {title: 'Delete Ticket', ticket: ticket, layout: 'main'} );
 });
@@ -115,6 +130,7 @@ router.get("/TicketListing", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
     var tickets = await db.getTickets();
+    console.log(tickets);
 
     res.render('./ticket/ticketindex', {title: 'Safari Security Ticket Index', tickets: tickets, layout: 'main'} );
 });
@@ -129,8 +145,9 @@ router.get("/ViewTicket/:id", async function(req,res){
     var closed = false;
 
     var comments = await db.getComments(ticketid);
+    console.log(comments);
 
-    if(ticket.UserID == req.session.user._id){
+    if(ticket.User._id == req.session.user._id){
         creator = true;
     }
 

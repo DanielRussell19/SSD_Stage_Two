@@ -15,7 +15,7 @@
                             TicketNumber: {{ticket.TicketNumber}}<br>
                             Type: {{ticket.Type}}<br>
                             Status: {{ticket.Status}}<br>
-                            Created by: {{ticket.UserID}}<br>
+                            Created by: {{ticket.User.username}}<br>
                             Priority: {{ticket.Priority}}<br>
                             Date of Submission: {{ticket.DOS}}<br>
                             Assigned Users: {{ticket.Assignee.username}}
@@ -44,7 +44,7 @@
                 <table style="border: solid black 2px;">
                     {{#each comments}}
                         <tr>
-                            <td style="border: solid black 2px;">{{this.Content}}<br>Created by: {{this.UserID}} - Submitted: {{this.DOS}}<br>
+                            <td style="border: solid black 2px;">{{this.Content}}<br>Created by: {{this.User.username}} - Submitted: {{this.DOS}}<br>
                                 <a href="/DeleteComment/{{this._id}}">Delete</a>
                             </td>
                         </tr>
