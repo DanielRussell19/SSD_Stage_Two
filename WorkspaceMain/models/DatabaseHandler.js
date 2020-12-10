@@ -48,31 +48,40 @@ function insertRoles(){
 
 //Tickets
 function insertTicket(ticket){
-    client.connect(url, function(err, db){
+    return new Promise(resolve => {
+        client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
 
         dbo.collection("tickets").insertOne(ticket,function(err,res){
             if(err) throw err;
-            console.log("Ticket document added");
+            console.log("ticket document added" + res.insertedCount);
         });
 
         db.close();
+        resolve();
+        });
     });
 }
 
 //Comments
 function insertComment(comment){
-    client.connect(url, function(err, db){
+    return new Promise(resolve => {
+        client.connect(url, function(err, db){
         if(err) throw err;
         var dbo = db.db("StageTwo");
 
+        comment.UserID = ObjectId(comment.UserID);
+        comment.TicketID = ObjectId(comment.TicketID);
+
         dbo.collection("comments").insertOne(comment,function(err,res){
             if(err) throw err;
-            console.log("Comment document added");
+            console.log("comment document added" + res.insertedCount);
         });
 
         db.close();
+        resolve();
+        });
     });
 }
 
@@ -113,7 +122,8 @@ function updateTicket(ticket){
                    UserID: ticket.UserID,
                     Priority: ticket.Priority,
                      DOS: ticket.DOS,
-                      Description: ticket.Description } };
+                      Description: ticket.Description,
+                      Assignee: ticket.Assignee } };
 
             dbo.collection("tickets").updateOne(q, newvalues,function(err,res){
                 if(err) throw err;
@@ -197,6 +207,7 @@ function deleteComment(id){
             var dbo = db.db("StageTwo");
     
             var q = {_id: ObjectId(id)};
+            console.log(q);
 
             dbo.collection("comments").deleteOne(q,function(err,res){
                 if(err) throw err;
@@ -217,6 +228,40 @@ function getUser(user){
             var dbo = db.db("StageTwo");
 
             dbo.collection("users").findOne(user, function(err,res){
+                if(err) throw err;
+                db.close();
+                resolve(res);
+            });
+        });
+    });
+}
+
+function getUsers(){
+    return new Promise(resolve => {
+        
+        client.connect(url, function(err, db){
+            if(err) throw err;
+            var dbo = db.db("StageTwo");
+
+            dbo.collection("users").find({}).toArray(function(err,res){
+                if(err) throw err;
+                db.close();
+                resolve(res);
+            });
+        });
+    });
+}
+
+function getUserByID(id){
+    return new Promise(resolve => {
+        
+        client.connect(url, function(err, db){
+            if(err) throw err;
+            var dbo = db.db("StageTwo");
+
+            id = ObjectId(id);
+
+            dbo.collection("users").findOne({_id: id}, function(err,res){
                 if(err) throw err;
                 db.close();
                 resolve(res);
@@ -403,14 +448,14 @@ function seedDatabase(){
         var dbo = db.db("StageTwo");
 
         var q = [
-            {username: 'test', password: 'test', RoleIDs:[2], isloggedin: false },
-            {username: 'Dave', password: 'test', RoleIDs:[1, 2], isloggedin: false},
-            {username: 'Lilith', password: 'test', RoleIDs:[1], isloggedin: false},
-            {username: 'Paul', password: 'test', RoleIDs:[2], isloggedin: false},
-            {username: 'HP', password: 'test', RoleIDs:[3], isloggedin: false},
-            {username: 'Amazon', password: 'test', RoleIDs:[3], isloggedin: false},
-            {username: 'Qula', password: 'test', RoleIDs:[3], isloggedin: false},
-            {username: 'Onion', password: 'test', RoleIDs:[3], isloggedin: false}
+            {username: 'TestTester', password: 'test', RoleIDs:[2], isloggedin: false },
+            {username: 'DevTester', password: 'test', RoleIDs:[1, 2], isloggedin: false},
+            {username: 'Dev', password: 'test', RoleIDs:[1], isloggedin: false},
+            {username: 'Tester', password: 'test', RoleIDs:[2], isloggedin: false},
+            {username: 'HPClient', password: 'test', RoleIDs:[3], isloggedin: false},
+            {username: 'AmazonClient', password: 'test', RoleIDs:[3], isloggedin: false},
+            {username: 'QulaClient', password: 'test', RoleIDs:[3], isloggedin: false},
+            {username: 'OnionClient', password: 'test', RoleIDs:[3], isloggedin: false}
         ];
     
         dbo.collection("users").insertMany(q,function(err,res){
@@ -420,9 +465,9 @@ function seedDatabase(){
 
         //tickets
         var q2 = [
-            {Title: "Broken HTTP",UserID: null, TicketNumber: 1, DOS: Date.now(), Priority:'low', Status: 'open', Description: 'test', Type: 'development'},
-            {Title: "What's the Wifi password?",UserID: null, TicketNumber: 2, DOS: Date.now(), Priority:'medium', Status: 'closed', Description: 'test', Type: 'development'},
-            {Title: "ERROR 404, like what?!!!",UserID: null, TicketNumber: 2, DOS: Date.now(), Priority:'high', Status: 'resolved', Description: 'test', Type: 'development'}
+            {Title: "Broken HTTP",UserID: null, TicketNumber: 1, DOS: new Date(), Priority:'low', Status: 'open', Description: 'test', Type: 'development', Assignee: null},
+            {Title: "What's the Wifi password?",UserID: null, TicketNumber: 2, DOS: new Date(), Priority:'medium', Status: 'closed', Description: 'test', Type: 'development', Assignee: null},
+            {Title: "ERROR 404, like what?!!!",UserID: null, TicketNumber: 2, DOS: new Date(), Priority:'high', Status: 'resolved', Description: 'test', Type: 'development', Assignee: null}
         ];
     
          dbo.collection("tickets").insertMany(q2,function(err,res){
@@ -431,11 +476,11 @@ function seedDatabase(){
         });
 
         var q3 = [
-            {UserID:null, TicketID: null, DOS: Date.now(), Content: 'test'},
-            {UserID:null, TicketID: null, DOS: Date.now(), Content: 'tester'},
-            {UserID:null, TicketID: null, DOS: Date.now(), Content: 'Apples'},
-            {UserID:null, TicketID: null, DOS: Date.now(), Content: 'Problems'},
-            {UserID:null, TicketID: null, DOS: Date.now(), Content: 'Your correct!'}
+            {UserID:null, TicketID: null, DOS: new Date(), Content: 'test'},
+            {UserID:null, TicketID: null, DOS: new Date(), Content: 'tester'},
+            {UserID:null, TicketID: null, DOS: new Date(), Content: 'Apples'},
+            {UserID:null, TicketID: null, DOS: new Date(), Content: 'Problems'},
+            {UserID:null, TicketID: null, DOS: new Date(), Content: 'Your correct!'}
         ];
 
         dbo.collection("comments").insertMany(q3,function(err,res){
@@ -446,52 +491,12 @@ function seedDatabase(){
     
         db.close();
     });  
-
-/*     client.connect(url, function(err, db){
-         if(err) throw err;
-         var dbo = db.db("StageTwo");
-
-        //tickets
-        var q = [
-            {Title: "Broken HTTP",UserID: null, TicketNumber: 1, DOS: Date.now(), Priority:'low', Status: 'open', Description: 'test', Type: 'development'},
-            {Title: "What's the Wifi password?",UserID: null, TicketNumber: 2, DOS: Date.now(), Priority:'medium', Status: 'closed', Description: 'test', Type: 'development'},
-            {Title: "ERROR 404, like what?!!!",UserID: null, TicketNumber: 2, DOS: Date.now(), Priority:'high', Status: 'resolved', Description: 'test', Type: 'development'}
-        ];
-    
-         dbo.collection("tickets").insertMany(q,function(err,res){
-         if(err) throw err;
-             console.log("ticket documents added" + res.insertedCount);
-        });
-    
-         db.close();
-     });
-
-    client.connect(url, function(err, db){
-        if(err) throw err;
-        var dbo = db.db("StageTwo");
-    
-        var q = [
-            {UserID:null, TicketID: null, DOS: Date.now(), Content: 'test'},
-            {UserID:null, TicketID: null, DOS: Date.now(), Content: 'tester'},
-            {UserID:null, TicketID: null, DOS: Date.now(), Content: 'Apples'},
-            {UserID:null, TicketID: null, DOS: Date.now(), Content: 'Problems'},
-            {UserID:null, TicketID: null, DOS: Date.now(), Content: 'Your correct!'}
-        ];
-
-        dbo.collection("comments").insertMany(q,function(err,res){
-        if(err) throw err;
-            console.log("comment documents added" + res.insertedCount);
-            fixrelationships();
-        });
-    
-        db.close();
-    }); */
 }
 
 async function fixrelationships(){
     var tickets = await getTickets();
     var comments = await getCommentsNonId();
-    var user = await getUser(new User('test', 'test'));
+    var user = await getUser(new User('Tester', 'test'));
 
     var ticketid = tickets[0]._id;
     var userid = user._id;
@@ -500,6 +505,7 @@ async function fixrelationships(){
     do{
         var ticket = tickets[i];
         ticket.UserID = userid;
+        ticket.Assignee = user;
         updateTicket(ticket);
         i = i+1;
     }while(tickets[i] != null);
@@ -512,7 +518,7 @@ async function fixrelationships(){
         comment.TicketID = ticketid;
         updateComment(comment);
         i = i+1;
-    }while(tickets[i] != null);
+    }while(comments[i] != null);
 }
 
 //Exports class DBHandler
@@ -520,6 +526,8 @@ exports.seedDatabase = seedDatabase;
 exports.dropCollections = dropCollections;
 
 exports.getUser = getUser;
+exports.getUsers = getUsers;
+exports.getUserByID = getUserByID;
 exports.loginUser = loginUser;
 exports.logoutUser = logoutUser;
 exports.updateUser = updateUser;
@@ -527,11 +535,12 @@ exports.deleteUser = deleteUser;
 
 exports.getTickets = getTickets;
 exports.getTicket = getTicket;
+exports.insertTicket = insertTicket;
 exports.updateTicket = updateTicket;
 exports.deleteTicket = deleteTicket;
 
 exports.getComment = getComment;
 exports.getComments = getComments;
-//exports.createComment = createComment;
+exports.insertComment = insertComment;
 exports.updateComment = updateComment;
 exports.deleteComment = deleteComment;

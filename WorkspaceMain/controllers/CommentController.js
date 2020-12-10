@@ -5,29 +5,25 @@ let db = require('../models/DatabaseHandler');
 
 const { check, validationResult } = require('express-validator');
 
-//Inital responses
-router.get("/CreateComment", function(req,res){
-    res.render('./comment/createcomment', {title: 'Comment Creation', layout: 'main'} );
+//Inital response;
+
+//,[check('username').escape(), check('password').escape()],
+
+router.post("/CreateComment/:id", function(req,res){
+    var ticketid = req.params.id;
+    db.insertComment({UserID: req.session.user._id, TicketID: ticketid, DOS: new Date(), Content: req.body.content});
+
+    res.redirect('/ViewTicket/'+ticketid);
 });
 
-router.post("/CreateComment", function(req,res){
-    res.render('./comment/createcomment', {title: 'Comment Creation', layout: 'main'} );
-});
+//,[check('username').escape(), check('password').escape()],
 
-router.get("/UpdateComment", function(req,res){
-    res.render('./comment/updatecomment', {title: 'Update Comment', layout: 'main'} );
-});
+router.get("/DeleteComment/:id", function(req,res){
+    var ticketid = req.params.id;
 
-router.post("/UpdateComment", function(req,res){
-    res.render('./comment/updatecomment', {title: 'Update Comment', layout: 'main'} );
-});
+    db.deleteComment(ticketid);
 
-router.get("/DeleteComment", function(req,res){
-    res.render('./comment/deletecomment', {title: 'Delete Comment', layout: 'main'} );
-});
-
-router.post("/DeleteComment", function(req,res){
-    res.render('./comment/deletecomment', {title: 'Delete Comment', layout: 'main'} );
+    res.redirect('/TicketListing');
 });
 
 module.exports = router;

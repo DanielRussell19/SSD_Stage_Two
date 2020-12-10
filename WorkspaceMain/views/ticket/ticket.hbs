@@ -17,7 +17,8 @@
                             Status: {{ticket.Status}}<br>
                             Created by: {{ticket.UserID}}<br>
                             Priority: {{ticket.Priority}}<br>
-                            Date of Submission: {{ticket.DOS}}
+                            Date of Submission: {{ticket.DOS}}<br>
+                            Assigned Users: {{ticket.Assignee.username}}
                         </td>
                     </tr>
                     <tr>
@@ -31,17 +32,25 @@
                 </table>
             </div>
 
+    <div>
         {{#unless closed}}
-            <div>
+        User Comments:
+            <form method="POST" action="/CreateComment/{{ticket._id}}">
+                <input type="hidden" name="ticketid" value={{ticket._id}}>
+                <input type="text" name="content" value="">
+                <input type="submit">
+            </form>
+        {{/unless}}
                 <table style="border: solid black 2px;">
                     {{#each comments}}
                         <tr>
-                            <td style="border: solid black 2px;">{{this.Content}}<br>Created by: {{this.UserID}} - Submitted: {{this.DOS}}</td>
+                            <td style="border: solid black 2px;">{{this.Content}}<br>Created by: {{this.UserID}} - Submitted: {{this.DOS}}<br>
+                                <a href="/DeleteComment/{{this._id}}">Delete</a>
+                            </td>
                         </tr>
                     {{/each}}
                 </table>
             </div>
-        {{/unless}}
     </div>
 
     <div class="footer-container">

@@ -6,16 +6,34 @@ let db = require('../models/DatabaseHandler');
 const { check, validationResult } = require('express-validator');
 
 //Inital responses
-router.get("/CreateTicket", function(req,res){
+router.get("/CreateTicket", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
-    res.render('./ticket/createticket', {title: 'Ticket Creation', layout: 'main'} );
+    var users = await db.getUsers();
+
+    res.render('./ticket/createticket', {title: 'Ticket Creation', users: users, layout: 'main'} );
 });
+
+//,[check('username').escape(), check('password').escape()],
 
 router.post("/CreateTicket", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
-    res.render('./ticket/createticket', {title: 'Ticket Creation', layout: 'main'} );
+    var user = req.session.user;
+    var assigneduser = await db.getUserByID(req.body.assignee);
+
+    var ticket = {Title: req.body.title,
+         UserID: user._id,
+          TicketNumber: null,
+           DOS: new Date(),
+            Priority: req.body.priority,
+             Status: req.body.status,
+              Description: req.body.description,
+               Type: req.body.type,
+                Assignee: assigneduser};
+
+    db.insertTicket(ticket);
+    res.redirect('/TicketListing');
 });
 
 router.get("/UpdateTicket/:id", async function(req,res){
@@ -23,17 +41,40 @@ router.get("/UpdateTicket/:id", async function(req,res){
 
     var ticketid = req.params.id;
 
-    console.log(ticketid);
-
     var ticket = await db.getTicket(ticketid);
+    var users = await db.getUsers();
 
-    console.log(ticket);
-
-    res.render('./ticket/updateticket', {title: 'Update Ticket',ticket: ticket, layout: 'main'} );
+    res.render('./ticket/updateticket', {title: 'Update Ticket',ticket: ticket, users: users, layout: 'main'} );
 });
 
-router.post("/UpdateTicket", function(req,res){
+//,[check('username').escape(), check('password').escape()],
+
+router.post("/UpdateTicket", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
+
+    if(req.body.assigneenew == null || req.body.assigneenew == 'null'){
+
+        user = await db.getUserByID(req.body.assigneeold)
+
+        var ticket = { _id: req.body._id,
+            Title: req.body.title,
+            UserID: req.body.userid,
+            TicketNumber: req.body.ticketnumber,
+            DOS: req.body.dos,
+            Priority: req.body.priority,
+            Status: req.body.status,
+            Description: req.body.description,
+            Type: req.body.type,
+            Assignee: user};
+    
+        db.updateTicket(ticket);
+        res.redirect('/ViewTicket/'+req.body._id);
+
+        res.redirect('/ViewTicket/'+req.body._id);
+    }
+    else{
+
+    user = await db.getUserByID(req.body.assigneenew)
 
     var ticket = { _id: req.body._id,
         Title: req.body.title,
@@ -43,10 +84,13 @@ router.post("/UpdateTicket", function(req,res){
         Priority: req.body.priority,
         Status: req.body.status,
         Description: req.body.description,
-        Type: req.body.type}
+        Type: req.body.type,
+        Assignee: user};
 
     db.updateTicket(ticket);
-    res.redirect('/TicketListing');
+    res.redirect('/ViewTicket/'+req.body._id);
+
+    }
 });
 
 router.get("/DeleteTicket/:id", async function(req,res){

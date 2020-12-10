@@ -23,16 +23,33 @@
                         <td><input type="hidden" name="ticketnumber" value={{ticket.TicketNumber}}></td>
                     </tr>
                     <tr>
-                        <td>Type:<input type="text" name="type" value={{ticket.Type}}></td>
+                        <td><input type="hidden" name="assigneeold" value={{ticket.Assignee._id}}></td>
                     </tr>
                     <tr>
-                        <td>Status:<input type="text" name="status" value={{ticket.Status}}></td>
+                        <td>Type:<select required name="type">
+                            <option value="development">Development</option>
+                            <option value="testing">Testing</option>
+                            <option value="production">Production</option>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td>Status:<select required name="status">
+                            <option value="open">Open</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        </td>
                     </tr>
                     <tr>
                         <td><input type="hidden" name="userid" value={{ticket.UserID}}></td>
                     </tr>
                     <tr>
-                        <td>Priority:<input type="text" name="priority" value={{ticket.Priority}}></td>
+                        <td>Priority:<select required name="priority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                        </td>
                     </tr>
                     <tr>
                         <td><input type="hidden" name="dos" value={{ticket.DOS}}></td>
@@ -41,9 +58,21 @@
                         <td>Description:<input type="text" name="description" value={{ticket.Description}}></td>
                     </tr>
                     <tr>
-                        {{#if creator}}
+                        <td>Assigned User:{{ticket.Assignee.username}}</td>
+                    </tr>
+                    <tr>
+                        <td>Assign User:<select name="assigneenew">
+                            <option value="null">None</option>
+                            {{#each users}}
+                            <option value={{this._id}}>{{this.username}}</option>
+                            {{/each}}
+                        </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        {{#unless creator}}
                         <td><a href="/DeleteTicket/{{ticket._id}}">Delete Ticket</a></td>
-                        {{/if}}
+                        {{/unless}}
                     </tr>
                     <tr>
                         <td><input type="submit"></td>

@@ -15,9 +15,6 @@ router.get("/Login", function(req,res){
 });
 
 router.post("/Login",[check('username').escape(), check('password').escape()], async function(req,res){
-    
-console.log(req.body.username);
-console.log(req.body.password);
 
     if(!req.body.username || !req.body.password){
         res.cookie('error', 'Please fill both fields');
@@ -36,7 +33,6 @@ console.log(req.body.password);
         }
         else if(user.isloggedin == false){
             user.isloggedin = true;
-            console.log("Login");
             db.loginUser(user);
     
             req.session.user = user;
@@ -58,7 +54,6 @@ router.post("/Loginout", async function(req,res){
     else{
         var user = req.session.user;
         user.isloggedin = false;
-        console.log("Logout");
         db.logoutUser(user);
     
         req.session.user = null;

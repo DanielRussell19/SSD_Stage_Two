@@ -7,12 +7,53 @@
 </head> --}}
 <body>
     <div class="header-container">
-        <h1 class="header-title">Safari Security Ticket Listing</h1>
-        <nav class="header-nav"><a href="/Loginout" class="header-nav-btn">Loginout</a></nav>
+        <h1 class="header-title">Safari Security Ticket Index</h1>
+        <nav class="header-nav"><a href="/TicketListing" class="header-nav-btn">Return</a></nav>
     </div>
 
     <div class="middle-container">
-        <nav class="middle-nav"><a href="/CreateTicket">Create Ticket</a></nav>
+        <form method="POST" action="/CreateTicket">
+            <div style="border: black solid 2px;">
+                <table>
+                    <tr>
+                        <td>Title:<input type="text" required name="title"></td>
+                    </tr>
+                    <tr>
+                        <td>Type:<select required name="type">
+                            <option value="development">Development</option>
+                            <option value="testing">Testing</option>
+                            <option value="production">Production</option>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td><input type="hidden" name="status" value="open"></td>
+                    </tr>
+                    <tr>
+                        <td>Priority:<select required name="priority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Description:<input required type="text" name="description"></td>
+                    </tr>
+                    <tr>
+                        <td>Assign User:<select name="assignee">
+                            <option value="null">None</option>
+                            {{#each users}}
+                            <option value={{this._id}}>{{this.username}}</option>
+                            {{/each}}
+                        </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit"></td>
+                    </tr>
+                </table>
+            </div>
+        </form>
     </div>
 
     <div class="footer-container">
