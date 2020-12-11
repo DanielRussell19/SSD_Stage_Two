@@ -1,3 +1,5 @@
+//Daniel Russell
+//Imports
 let express = require('express');
 let router = express.Router();
 
@@ -5,7 +7,7 @@ let db = require('../models/DatabaseHandler');
 
 const { check, validationResult } = require('express-validator');
 
-//Inital responses
+//Routers
 router.get("/CreateTicket", async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
@@ -14,9 +16,7 @@ router.get("/CreateTicket", async function(req,res){
     res.render('./ticket/createticket', {title: 'Ticket Creation', users: users, layout: 'main'} );
 });
 
-//,[check('username').escape(), check('password').escape()],
-
-router.post("/CreateTicket", async function(req,res){
+router.post("/CreateTicket",[check('description').escape(), check('title').escape()], async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
     var user = req.session.user;
@@ -58,9 +58,7 @@ router.get("/UpdateTicket/:id", async function(req,res){
     res.render('./ticket/updateticket', {title: 'Update Ticket',ticket: ticket, users: users, layout: 'main'} );
 });
 
-//,[check('username').escape(), check('password').escape()],
-
-router.post("/UpdateTicket", async function(req,res){
+router.post("/UpdateTicket",[check('description').escape(), check('title').escape()], async function(req,res){
     if(!req.session.user){res.redirect('/Error');}
 
     if(req.session.user._id != req.body.userid){res.redirect('/Error');}
@@ -132,7 +130,7 @@ router.get("/TicketListing", async function(req,res){
     var tickets = await db.getTickets();
     console.log(tickets);
 
-    res.render('./ticket/ticketindex', {title: 'Safari Security Ticket Index', tickets: tickets, layout: 'main'} );
+    res.render('./ticket/ticketindex', {title: 'Safari Security Ticket Index', tickets: tickets, username: req.session.user.username, layout: 'main'} );
 });
 
 router.get("/ViewTicket/:id", async function(req,res){

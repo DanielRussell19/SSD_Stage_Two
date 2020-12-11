@@ -1,3 +1,5 @@
+//Daniel Russell
+//imports
 let express = require('express');
 let router = express.Router();
 
@@ -5,25 +7,30 @@ let db = require('../models/DatabaseHandler');
 
 const { check, validationResult } = require('express-validator');
 
-//Inital response;
-
-//,[check('username').escape(), check('password').escape()],
-
-router.post("/CreateComment/:id", function(req,res){
+//Routers
+router.post("/CreateComment/:id",[check('content').escape()], function(req,res){
+    if(!req.session.user){res.redirect('/Error');}
     var ticketid = req.params.id;
-    db.insertComment({UserID: req.session.user._id, TicketID: ticketid, DOS: new Date(), Content: req.body.content});
+    
+    console.log("Post insert comment: " + req.body.content)
 
+    db.insertComment({User: {_id: req.session.user._id, username: req.session.user.username}, TicketID: ticketid, DOS: new Date(), Content: req.body.content});
     res.redirect('/ViewTicket/'+ticketid);
 });
 
-//,[check('username').escape(), check('password').escape()],
+router.post("/DeleteComment", function(req,res){
+    if(!req.session.user){res.redirect('/Error');}
+    var ticketid = req.body.ticketid;
+    var userid = req.body.userid;
+    var commentid = req.body.commentid;
 
-router.get("/DeleteComment/:id", function(req,res){
-    var ticketid = req.params.id;
-
-    db.deleteComment(ticketid);
-
-    res.redirect('/TicketListing');
+    if(req.session.user._id != userid){
+        res.redirect('/ViewTicket/'+ticketid);
+    }
+    else{
+        db.deleteComment(commentid);
+        res.redirect('/ViewTicket/'+ticketid);
+    }
 });
 
 module.exports = router;

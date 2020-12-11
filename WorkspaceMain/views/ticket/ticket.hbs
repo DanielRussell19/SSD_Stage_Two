@@ -37,7 +37,7 @@
         User Comments:
             <form method="POST" action="/CreateComment/{{ticket._id}}">
                 <input type="hidden" name="ticketid" value={{ticket._id}}>
-                <input type="text" name="content" value="">
+                <input type="text" name="content" required value="">
                 <input type="submit">
             </form>
         {{/unless}}
@@ -45,7 +45,12 @@
                     {{#each comments}}
                         <tr>
                             <td style="border: solid black 2px;">{{this.Content}}<br>Created by: {{this.User.username}} - Submitted: {{this.DOS}}<br>
-                                <a href="/DeleteComment/{{this._id}}">Delete</a>
+                                <form method="POST" action="/DeleteComment">
+                                <input type="hidden" name="commentid" value={{this._id}}>
+                                <input type="hidden" name="userid" value={{this.User._id}}>
+                                <input type="hidden" name="ticketid" value={{this.TicketID}}>
+                                <input type="submit" value="Delete">
+                                </form>
                             </td>
                         </tr>
                     {{/each}}

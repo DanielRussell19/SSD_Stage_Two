@@ -7,8 +7,6 @@ const {ObjectId} = require('mongodb');
 const url = "mongodb://localhost:27017/StageTwo";
 
 let User = require('../models/User');
-//let Ticket = require('../models/Ticket');
-//let Comment = require('../models/Comment');
 
 //DB Creation and Drop//
 async function createDB(){
@@ -22,7 +20,7 @@ async function createDB(){
 
 //DB inserts//
 
-//Roles
+//insert roles
 function insertRoles(){
     return new Promise(resolve => {
         client.connect(url, function(err, db){
@@ -46,7 +44,7 @@ function insertRoles(){
     });
 }
 
-//Tickets
+//insert ticket
 function insertTicket(ticket){
     return new Promise(resolve => {
         client.connect(url, function(err, db){
@@ -64,7 +62,7 @@ function insertTicket(ticket){
     });
 }
 
-//Comments
+//insert comment
 function insertComment(comment){
     return new Promise(resolve => {
         client.connect(url, function(err, db){
@@ -156,9 +154,9 @@ function updateComment(comment){
     });
 }
 
-//DB Deletes//
+//DB deletes
 
-//Users
+//delete user by user object
 function deleteUser(user){
     return new Promise(resolve => {
         
@@ -178,7 +176,7 @@ function deleteUser(user){
     });
 }
 
-//Tickets
+//delete ticket by id
 function deleteTicket(id){
     return new Promise(resolve => {
         
@@ -198,7 +196,7 @@ function deleteTicket(id){
     });
 }
 
-//Comments
+//delete comment by id
 function deleteComment(id){
     return new Promise(resolve => {
         
@@ -219,7 +217,9 @@ function deleteComment(id){
     });
 }
 
-//gets
+//DB get users//
+
+//get user similar to passed user object
 function getUser(user){
     return new Promise(resolve => {
         
@@ -236,6 +236,7 @@ function getUser(user){
     });
 }
 
+//get all users
 function getUsers(){
     return new Promise(resolve => {
         
@@ -252,6 +253,7 @@ function getUsers(){
     });
 }
 
+//get a specific user by id
 function getUserByID(id){
     return new Promise(resolve => {
         
@@ -270,6 +272,7 @@ function getUserByID(id){
     });
 }
 
+//get a specific ticket by ticket id
 function getTicket(ticketid){
     return new Promise(resolve => {
         
@@ -288,6 +291,7 @@ function getTicket(ticketid){
     });
 };
 
+//get all tickets
 async function getTickets(){
     return new Promise(resolve => {
         
@@ -304,6 +308,7 @@ async function getTickets(){
     });
 }
 
+//get specific comment by comment id
 function getComment(id){
     return new Promise(resolve => {
         
@@ -322,6 +327,7 @@ function getComment(id){
     });
 }
 
+//get all comments with ticket id relation
 function getComments(id){
     return new Promise(resolve => {
         
@@ -338,6 +344,7 @@ function getComments(id){
     });
 }
 
+//get all comments with no ticket id relation
 function getCommentsNonId(){
     return new Promise(resolve => {
         
@@ -354,6 +361,7 @@ function getCommentsNonId(){
     });
 }
 
+//drop collections stored on mongodb
 function dropCollections(){
     return new Promise(resolve => {
         
@@ -423,6 +431,7 @@ function dropCollections(){
     });
 }
 
+//login logout methods reusing the updateuser method
 function loginUser(user){
     user.isloggedin = true;
     updateUser(user);
@@ -435,7 +444,7 @@ function logoutUser(user){
 
 //database seeder method
 function seedDatabase(){
-    //poorly implemented seeder method cause holy hell is test data had to fabricate with generated objectid's
+    //poorly implemented seeder method cause holy hell is test data hard to fabricate with asynconously generated objectid's
     //especially when the relationships rely on them
 
     //drop pre-existing data

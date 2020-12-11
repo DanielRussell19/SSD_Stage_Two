@@ -1,3 +1,6 @@
+//Daniel Russell
+
+//imports
 let express = require('express');
 let router = express.Router();
 
@@ -6,7 +9,7 @@ let User = require('../models/User');
 
 const { check, validationResult } = require('express-validator');
 
-//Inital responses
+//routers
 router.get("/Login", function(req,res){
     if(req.session.user != null){res.redirect('/TicketListing');}
     else{

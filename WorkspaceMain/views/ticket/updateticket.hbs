@@ -17,7 +17,7 @@
             <div style="border: black solid 2px;">
                 <table>
                     <tr>
-                        <td>Title:<input type="text" name="title" value={{ticket.Title}}></td>
+                        <td>Title:<input type="text" required name="title" value={{ticket.Title}}></td>
                     </tr>
                     <tr>
                         <td><input type="hidden" name="ticketnumber" value={{ticket.TicketNumber}}></td>
@@ -56,7 +56,7 @@
                         <td><input type="hidden" name="dos" value={{ticket.DOS}}></td>
                     </tr>
                     <tr>
-                        <td>Description:<input type="text" name="description" value={{ticket.Description}}></td>
+                        <td>Description:<input type="text" required name="description" value={{ticket.Description}}></td>
                     </tr>
                     <tr>
                         <td>Assigned User:{{ticket.Assignee.username}}</td>

@@ -1,9 +1,12 @@
+//Daniel Russell
+
+//Imports
 let express = require('express');
 let router = express.Router();
 
 let db = require('../models/DatabaseHandler');
 
-//Inital responses
+//Router responses
 router.get("/", function(req,res){
     res.render('./main/index', {title: 'Safari Security Ticket Index', layout: 'main'} );
 });
@@ -23,6 +26,7 @@ router.get("/DropDB", function(req,res){
     res.render('./main/index', {title: 'Tempoary Seeder Page', layout: 'main'} );
 });
 
+//Error page router
 router.use(function(req,res){
     var error;
     
